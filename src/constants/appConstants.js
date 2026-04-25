@@ -1,7 +1,7 @@
 export const STORAGE_KEY = '@healplus_local_db_v4';
 export const ONBOARDING_STORAGE_KEY = '@healplus_onboarding_seen_v1';
 export const APP_VERSION = require('../../app.json')?.expo?.version || '1.0.0';
-export const LOGO_IMAGE = require('../../assets/logo.png');
+export const LOGO_IMAGE = { uri: 'https://raw.githubusercontent.com/pedrotescaro/healplus-mobile/main/assets/logo.png' };
 
 export const PROFILE_STACK_SCREENS = [
   'Perfil',
