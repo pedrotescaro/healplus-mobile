@@ -645,7 +645,7 @@ function AppContent() {
 
   const confirmarTroca = () => {
     if (tempEmail.trim() && tempName.trim()) {
-      setDb(prev => ({ ...prev, user: { ...prev.user, name: tempName, email: tempEmail, photo: tempPhoto } }));
+      setDb(prev => ({ ...prev, user: { ...prev.user, name: tempName, email: tempEmail } }));
       setPassword('');
       setIsLoginButtonDimmed(false);
       setTela('Login');
@@ -2363,15 +2363,10 @@ function AppContent() {
             <View style={styles.content}>
               <SwitchAccountScreen
                 styles={styles}
-                colors={colors}
                 tempName={tempName}
                 setTempName={setTempName}
                 tempEmail={tempEmail}
                 setTempEmail={setTempEmail}
-                tempPhoto={tempPhoto}
-                isImagePickerBusy={isImagePickerBusy}
-                onOpenImagePicker={abrirImagePickerPerfil}
-                onRemovePhoto={removerFotoPerfil}
                 onSave={confirmarTroca}
                 onCancel={() => setTela('Login')}
               />

@@ -2,19 +2,12 @@ import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import TempProfilePhotoEditor from '../components/common/TempProfilePhotoEditor';
-
 export default function SwitchAccountScreen({
   styles,
-  colors,
   tempName,
   setTempName,
   tempEmail,
   setTempEmail,
-  tempPhoto,
-  isImagePickerBusy,
-  onOpenImagePicker,
-  onRemovePhoto,
   onSave,
   onCancel,
 }) {
@@ -22,16 +15,6 @@ export default function SwitchAccountScreen({
     <View style={styles.telaWrapper}>
       <Text style={styles.selectionTitle}>Editar informações</Text>
       <View style={styles.editContainer}>
-        <TempProfilePhotoEditor
-          colors={colors}
-          styles={styles}
-          tempPhoto={tempPhoto}
-          tempName={tempName}
-          isImagePickerBusy={isImagePickerBusy}
-          onOpenPicker={onOpenImagePicker}
-          onRemovePhoto={onRemovePhoto}
-        />
-
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>NOME COMPLETO</Text>
           <View style={styles.editInputWrapper}>
