@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ThemeProvider } from './src/context/ThemeContext';
-import HealPlusApp from './src/app/HealPlusApp';
+import HealPlusApp from './src/application/HealPlusApp';
 
 export default function App() {
   return (

@@ -1,8 +1,9 @@
 {
   "expo": {
     "name": "healplus-mobile",
-    "slug": "snack-b0b7cb6d-b232-4b1a-97ec-75e2f70cb251",
+    "slug": "healplus-mobile",
     "version": "1.0.0",
+    "sdkVersion": "54.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -24,6 +25,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
