@@ -532,11 +532,11 @@ export default function EvaluationScreen({
               </View>
 
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 5, marginBottom: 8 }}>
-                <Text style={{ fontSize: 28 }}>:D</Text>
-                <Text style={{ fontSize: 28 }}>:)</Text>
-                <Text style={{ fontSize: 28 }}>:|</Text>
-                <Text style={{ fontSize: 28 }}>:(</Text>
-                <Text style={{ fontSize: 28 }}>:o</Text>
+                <Text style={{ fontSize: 28 }}>😄</Text>
+                <Text style={{ fontSize: 28 }}>🙂</Text>
+                <Text style={{ fontSize: 28 }}>😐</Text>
+                <Text style={{ fontSize: 28 }}>🙁</Text>
+                <Text style={{ fontSize: 28 }}>😣</Text>
               </View>
 
               <View style={styles.painScaleBar}>
