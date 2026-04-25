@@ -20,7 +20,7 @@ export default function SwitchAccountScreen({
 }) {
   return (
     <View style={styles.telaWrapper}>
-      <Text style={styles.selectionTitle}>Editar informacoes</Text>
+      <Text style={styles.selectionTitle}>Editar informações</Text>
       <View style={styles.editContainer}>
         <TempProfilePhotoEditor
           colors={colors}

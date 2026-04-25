@@ -121,9 +121,9 @@ export default function LoginScreen({
           </TouchableOpacity>
 
           <Text style={styles.footerText}>
-            Ao clicar em continuar, voce concorda com nossos{`\n`}
-            <Text style={styles.footerLink}>Termos de Servico</Text> e{' '}
-            <Text style={styles.footerLink}>Politica de Privacidade</Text>.
+            Ao clicar em continuar, você concorda com nossos{`\n`}
+            <Text style={styles.footerLink}>Termos de Serviço</Text> e{' '}
+            <Text style={styles.footerLink}>Política de Privacidade</Text>.
           </Text>
         </View>
       </View>

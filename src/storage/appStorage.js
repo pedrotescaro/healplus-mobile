@@ -8,7 +8,7 @@ function warnStorageFallback(error) {
 
   hasWarnedAboutFallback = true;
   console.warn(
-    '[storage] AsyncStorage indisponivel; usando fallback em memoria.',
+    '[storage] AsyncStorage indisponível; usando fallback em memória.',
     error
   );
 }

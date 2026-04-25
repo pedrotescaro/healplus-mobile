@@ -11,8 +11,8 @@ export function makeReport(paciente, selectedEval) {
   const form = ultima.form || {};
 
   const tecidos = [
-    `Granulacao: ${form.percentual_granulacao_leito || 0}%`,
-    `Epitelizacao: ${form.percentual_epitelizacao_leito || 0}%`,
+    `Granulação: ${form.percentual_granulacao_leito || 0}%`,
+    `Epitelização: ${form.percentual_epitelizacao_leito || 0}%`,
     `Esfacelo: ${form.percentual_esfacelo_leito || 0}%`,
     `Necrose seca: ${form.percentual_necrose_seca_leito || 0}%`,
   ];
@@ -24,11 +24,11 @@ export function makeReport(paciente, selectedEval) {
     form.infeccao_dor_local && 'Dor local',
     form.infeccao_exsudato && 'Exsudato purulento',
     form.infeccao_odor && 'Odor',
-    form.infeccao_retardo_cicatrizacao && 'Retardo na cicatrizacao',
+    form.infeccao_retardo_cicatrizacao && 'Retardo na cicatrização',
   ].filter(Boolean);
 
   const pele = [
-    form.pele_perilesional_integra && 'Integra',
+    form.pele_perilesional_integra && 'Íntegra',
     form.pele_perilesional_eritematosa && 'Eritematosa',
     form.pele_perilesional_macerada && 'Macerada',
     form.pele_perilesional_seca_descamativa && 'Seca/descamativa',
@@ -36,7 +36,7 @@ export function makeReport(paciente, selectedEval) {
     form.pele_perilesional_hiperpigmentada && 'Hiperpigmentada',
     form.pele_perilesional_hipopigmentada && 'Hipopigmentada',
     form.pele_perilesional_indurada && 'Indurada',
-    form.pele_perilesional_sensivel && 'Sensivel',
+    form.pele_perilesional_sensivel && 'Sensível',
     form.pele_perilesional_edema && 'Edema',
   ].filter(Boolean);
 
@@ -54,19 +54,19 @@ export function makeReport(paciente, selectedEval) {
     exsudato:
       [form.quantidade_exsudato, form.tipo_exsudato, form.consistencia_exsudato]
         .filter(Boolean)
-        .join(' • ') || 'Nao informado',
+        .join(' • ') || 'Não informado',
     tecido: tecidos.join(' | '),
     infeccao: infeccao.length
       ? infeccao.join(', ')
-      : 'Sem sinais marcados na ultima avaliacao',
+      : 'Sem sinais marcados na última avaliação',
     bordas:
       [form.bordas_caracteristicas, form.fixacao_bordas].filter(Boolean).join(' • ') ||
-      'Nao informado',
-    regeneracao: form.velocidade_cicatrizacao || 'Nao informado',
-    pele: pele.length ? pele.join(', ') : 'Nao informado',
-    observacoes: form.observacoes || 'Sem observacoes registradas.',
-    retorno: form.data_retorno || 'Nao informado',
-    profissional: form.profissional_responsavel || 'Nao informado',
+      'Não informado',
+    regeneracao: form.velocidade_cicatrizacao || 'Não informado',
+    pele: pele.length ? pele.join(', ') : 'Não informado',
+    observacoes: form.observacoes || 'Sem observações registradas.',
+    retorno: form.data_retorno || 'Não informado',
+    profissional: form.profissional_responsavel || 'Não informado',
   };
 }
 
@@ -90,19 +90,19 @@ export function buildClinicalReportHtml({
         </style>
       </head>
       <body>
-        <h1>Relatorio de Avaliacao Clinica - Heal+</h1>
+        <h1>Relatório de Avaliação Clínica - Heal+</h1>
 
         <div class="section">
-          <div class="title">Identificacao</div>
+          <div class="title">Identificação</div>
           <div class="item"><span class="label">Paciente:</span> ${reportInfo.paciente.nome}</div>
-          <div class="item"><span class="label">Data de Nascimento:</span> ${reportInfo.paciente.dataNasc || 'Nao informado'}</div>
-          <div class="item"><span class="label">Avaliacao Referencia:</span> ${reportInfo.ultimaData}</div>
+          <div class="item"><span class="label">Data de Nascimento:</span> ${reportInfo.paciente.dataNasc || 'Não informado'}</div>
+          <div class="item"><span class="label">Avaliação Referência:</span> ${reportInfo.ultimaData}</div>
           <div class="item"><span class="label">Profissional:</span> ${reportInfo.profissional}</div>
         </div>
 
         <div class="section">
-          <div class="title">Resumo Clinico da Lesao</div>
-          <div class="item"><span class="label">Localizacao:</span> ${reportInfo.localizacao}</div>
+          <div class="title">Resumo Clínico da Lesão</div>
+          <div class="item"><span class="label">Localização:</span> ${reportInfo.localizacao}</div>
           <div class="item"><span class="label">Etiologia:</span> ${reportInfo.etiologia}</div>
           <div class="item"><span class="label">Dor (0-10):</span> ${reportInfo.dor}</div>
           <div class="item"><span class="label">Exsudato:</span> ${reportInfo.exsudato}</div>
@@ -114,10 +114,10 @@ export function buildClinicalReportHtml({
           <div class="section">
             <div class="title">Metodologia TIMERS</div>
             <div class="item"><span class="label">T - Tecido:</span> ${reportInfo.tecido}</div>
-            <div class="item"><span class="label">I - Infeccao/Infl:</span> ${reportInfo.infeccao}</div>
+            <div class="item"><span class="label">I - Infecção/Infl.:</span> ${reportInfo.infeccao}</div>
             <div class="item"><span class="label">M - Moisture:</span> Ver Exsudato</div>
             <div class="item"><span class="label">E - Edge (Bordas):</span> ${reportInfo.bordas}</div>
-            <div class="item"><span class="label">R - Regeneracao:</span> ${reportInfo.regeneracao}</div>
+            <div class="item"><span class="label">R - Regeneração:</span> ${reportInfo.regeneracao}</div>
             <div class="item"><span class="label">S - Social/Pele:</span> ${reportInfo.pele}</div>
           </div>`
             : ''
@@ -127,7 +127,7 @@ export function buildClinicalReportHtml({
           includeNotes
             ? `
           <div class="section">
-            <div class="title">Notas e Observacoes</div>
+            <div class="title">Notas e Observações</div>
             <div class="item">${reportInfo.observacoes}</div>
             <div class="item"><span class="label">Retorno Sugerido:</span> ${reportInfo.retorno}</div>
           </div>`
@@ -165,28 +165,28 @@ export function buildComparisonReportHtml({
         </style>
       </head>
       <body>
-        <h1>Relatorio Comparativo - Heal+</h1>
+        <h1>Relatório Comparativo - Heal+</h1>
 
         <div class="section">
-          <div class="title">Identificacao do Paciente</div>
+          <div class="title">Identificação do Paciente</div>
           <div class="item"><span class="label">Nome:</span> ${comparePatient.nome}</div>
-          <div class="item"><span class="label">Telefone:</span> ${comparePatient.telefone || 'Nao informado'}</div>
-          <div class="item"><span class="label">Email:</span> ${comparePatient.email || 'Nao informado'}</div>
+          <div class="item"><span class="label">Telefone:</span> ${comparePatient.telefone || 'Não informado'}</div>
+          <div class="item"><span class="label">E-mail:</span> ${comparePatient.email || 'Não informado'}</div>
         </div>
 
         <div class="section">
-          <div class="title">Comparativo Clinico TIMERS</div>
+          <div class="title">Comparativo Clínico TIMERS</div>
           <table>
             <thead>
               <tr>
-                <th>Parametro</th>
-                <th>Avaliacao A (${compareEvalA.data || '-'})</th>
-                <th>Avaliacao B (${compareEvalB.data || '-'})</th>
+                <th>Parâmetro</th>
+                <th>Avaliação A (${compareEvalA.data || '-'})</th>
+                <th>Avaliação B (${compareEvalB.data || '-'})</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>T - Granulacao</td>
+                <td>T - Granulação</td>
                 <td>${getVal(compareEvalA, 'percentual_granulacao_leito')}%</td>
                 <td>${getVal(compareEvalB, 'percentual_granulacao_leito')}%</td>
               </tr>
@@ -230,7 +230,7 @@ export async function exportHtmlToPdf(html) {
   const isSharingAvailable = await Sharing.isAvailableAsync();
 
   if (!isSharingAvailable) {
-    throw new Error('O compartilhamento nao esta disponivel no seu dispositivo.');
+    throw new Error('O compartilhamento não está disponível no seu dispositivo.');
   }
 
   await Sharing.shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });

@@ -26,12 +26,12 @@ export default function AboutAppScreen({
             <View style={{ flex: 1 }}>
               <Text style={styles.aboutBrandTitle}>Heal+</Text>
               <Text style={styles.aboutBrandSubtitle}>
-                Gestao clinica local com foco em agilidade e organizacao.
+                Gestão clínica local com foco em agilidade e organização.
               </Text>
             </View>
           </View>
           <View style={styles.aboutVersionPill}>
-            <Text style={styles.aboutVersionPillText}>Versao {APP_VERSION}</Text>
+            <Text style={styles.aboutVersionPillText}>Versão {APP_VERSION}</Text>
           </View>
         </View>
 
@@ -41,8 +41,8 @@ export default function AboutAppScreen({
             <Text style={styles.settingsInfoTitle}>Base local</Text>
           </View>
           <Text style={styles.settingsInfoText}>
-            O Heal+ mantem pacientes, agenda e relatorios diretamente no dispositivo para deixar o
-            fluxo rapido e disponivel mesmo sem depender de servicos externos.
+            O Heal+ mantém pacientes, agenda e relatórios diretamente no dispositivo para deixar o
+            fluxo rápido e disponível mesmo sem depender de serviços externos.
           </Text>
         </View>
 
@@ -52,19 +52,19 @@ export default function AboutAppScreen({
             <Text style={styles.settingsInfoTitle}>Tema atual</Text>
           </View>
           <Text style={styles.settingsInfoText}>
-            O app esta usando o modo {isDark ? 'escuro' : 'claro'} neste momento. Voce pode alterar
+            O app está usando o modo {isDark ? 'escuro' : 'claro'} neste momento. Você pode alterar
             isso a qualquer hora na tela de Perfil.
           </Text>
         </View>
 
-        <Text style={styles.profileSectionTitle}>ACESSOS RAPIDOS</Text>
+        <Text style={styles.profileSectionTitle}>ACESSOS RÁPIDOS</Text>
 
         <SettingsRow
           icon="shield-checkmark"
           iconColor="#10B981"
           iconBg="rgba(16, 185, 129, 0.15)"
           title="Privacidade"
-          subtitle="Revisar dados e permissoes"
+          subtitle="Revisar dados e permissões"
           onPress={onOpenPrivacy}
           showChevron
           colors={colors}

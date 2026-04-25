@@ -25,7 +25,7 @@ export default function PrivacyScreen({
           </View>
           <Text style={styles.settingsHeroTitle}>Seus dados, seu controle</Text>
           <Text style={styles.settingsHeroText}>
-            Ajuste como suas informacoes aparecem nas telas e revise as permissoes que o Heal+ usa
+            Ajuste como suas informações aparecem nas telas e revise as permissões que o Heal+ usa
             no dispositivo.
           </Text>
         </View>
@@ -37,7 +37,7 @@ export default function PrivacyScreen({
           iconColor="#10B981"
           iconBg="rgba(16, 185, 129, 0.15)"
           title="Ocultar e-mail em previews"
-          subtitle="Mostra uma versao mascarada nas telas de perfil e acesso"
+          subtitle="Mostra uma versão mascarada nas telas de perfil e acesso"
           rightElement={
             <Switch
               value={hideEmailPreviewEnabled}
@@ -55,7 +55,7 @@ export default function PrivacyScreen({
           iconColor="#3B82F6"
           iconBg="rgba(59, 130, 246, 0.15)"
           title="Exibir foto do perfil"
-          subtitle="Controla se sua foto aparece nas previas internas do app"
+          subtitle="Controla se sua foto aparece nas prévias internas do app"
           rightElement={
             <Switch
               value={showProfilePhotoEnabled}
@@ -74,7 +74,7 @@ export default function PrivacyScreen({
             <Text style={styles.settingsInfoTitle}>Armazenamento local</Text>
           </View>
           <Text style={styles.settingsInfoText}>
-            Pacientes, avaliacoes e agenda permanecem salvos no dispositivo. O app nao depende de
+            Pacientes, avaliações e agenda permanecem salvos no dispositivo. O app não depende de
             um backend externo para operar a rotina principal.
           </Text>
         </View>
@@ -82,11 +82,11 @@ export default function PrivacyScreen({
         <View style={styles.settingsInfoCard}>
           <View style={styles.settingsInfoHeader}>
             <Ionicons name="camera-outline" size={18} color={colors.primary} />
-            <Text style={styles.settingsInfoTitle}>Permissoes de camera e galeria</Text>
+            <Text style={styles.settingsInfoTitle}>Permissões de câmera e galeria</Text>
           </View>
           <Text style={styles.settingsInfoText}>
-            As permissoes de imagem sao usadas apenas quando voce escolhe anexar ou trocar fotos
-            clinicas dentro das avaliacoes e do perfil.
+            As permissões de imagem são usadas apenas quando você escolhe anexar ou trocar fotos
+            clínicas dentro das avaliações e do perfil.
           </Text>
         </View>
 

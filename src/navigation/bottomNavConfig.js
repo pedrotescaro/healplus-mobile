@@ -1,7 +1,7 @@
 export const BOTTOM_NAV_CONFIG = [
   {
     key: 'Home',
-    label: 'Inicio',
+    label: 'Início',
     activeIcon: 'home',
     inactiveIcon: 'home-outline',
   },
@@ -13,7 +13,7 @@ export const BOTTOM_NAV_CONFIG = [
   },
   {
     key: 'Avaliacao',
-    label: 'Avaliacoes',
+    label: 'Avaliações',
     activeIcon: 'add-circle',
     inactiveIcon: 'add-circle-outline',
   },

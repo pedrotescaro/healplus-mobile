@@ -3,8 +3,8 @@ import * as ImagePicker from 'expo-image-picker';
 
 export const getBlockedImagePermissionMessage = permissionName =>
   Platform.OS === 'ios'
-    ? `O acesso ${permissionName} esta bloqueado para o Heal+. Abra Ajustes do iPhone > Heal+ e libere a permissao para continuar.`
-    : `O acesso ${permissionName} esta bloqueado para o Heal+. Abra as configuracoes do app e libere a permissao para continuar.`;
+    ? `O acesso ${permissionName} está bloqueado para o Heal+. Abra Ajustes do iPhone > Heal+ e libere a permissão para continuar.`
+    : `O acesso ${permissionName} está bloqueado para o Heal+. Abra as configurações do app e libere a permissão para continuar.`;
 
 export const buildCameraPickerOptions = aspect => ({
   mediaTypes: ['images'],
@@ -49,7 +49,7 @@ export async function executeImageFlow({
 
     if (!permissionGranted) {
       Alert.alert(
-        'Permissao necessaria',
+        'Permissão necessária',
         permission?.canAskAgain === false
           ? getBlockedImagePermissionMessage(blockedPermissionName)
           : permissionDeniedMessage
@@ -63,8 +63,8 @@ export async function executeImageFlow({
     const nextUri = result?.assets?.[0]?.uri;
     if (!nextUri) {
       Alert.alert(
-        'Imagem indisponivel',
-        'A foto foi selecionada, mas o arquivo nao ficou disponivel para o app. Tente novamente.'
+        'Imagem indisponível',
+        'A foto foi selecionada, mas o arquivo não ficou disponível para o app. Tente novamente.'
       );
       return;
     }
@@ -73,8 +73,8 @@ export async function executeImageFlow({
   } catch (error) {
     console.warn(`[image-picker] Falha ao ${errorActionLabel}`, error);
     Alert.alert(
-      'Nao foi possivel abrir a imagem',
-      `O app nao conseguiu ${errorActionLabel} agora. Feche e tente novamente.`
+      'Não foi possível abrir a imagem',
+      `O app não conseguiu ${errorActionLabel} agora. Feche e tente novamente.`
     );
   } finally {
     if (afterFinish) afterFinish();

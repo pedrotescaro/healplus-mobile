@@ -19,15 +19,15 @@ export default function NotificationsScreen({
 }) {
   return (
     <View style={styles.homeContainer}>
-      <TopBar title="Notificacoes" backTo="Perfil" colors={colors} styles={styles} onBack={onBack} />
+      <TopBar title="Notificações" backTo="Perfil" colors={colors} styles={styles} onBack={onBack} />
       <ScrollView style={styles.homeScroll} showsVerticalScrollIndicator={false}>
         <View style={styles.settingsHeroCard}>
           <View style={[styles.settingsHeroIcon, { backgroundColor: 'rgba(245, 158, 11, 0.15)' }]}>
             <Ionicons name="notifications" size={24} color="#F59E0B" />
           </View>
-          <Text style={styles.settingsHeroTitle}>Preferencias de aviso</Text>
+          <Text style={styles.settingsHeroTitle}>Preferências de aviso</Text>
           <Text style={styles.settingsHeroText}>
-            Defina como o Heal+ deve sinalizar lembretes, agenda e comunicacoes do seu fluxo.
+            Defina como o Heal+ deve sinalizar lembretes, agenda e comunicações do seu fluxo.
           </Text>
         </View>
 
@@ -37,7 +37,7 @@ export default function NotificationsScreen({
           icon="notifications"
           iconColor="#F59E0B"
           iconBg="rgba(245, 158, 11, 0.15)"
-          title="Notificacoes gerais"
+          title="Notificações gerais"
           subtitle="Liga ou desliga todos os avisos do aplicativo"
           rightElement={
             <Switch
@@ -76,7 +76,7 @@ export default function NotificationsScreen({
           iconColor="#8B5CF6"
           iconBg="rgba(139, 92, 246, 0.15)"
           title="Resumo por e-mail"
-          subtitle="Mantem o canal de contato preparado para futuras comunicacoes"
+          subtitle="Mantém o canal de contato preparado para futuras comunicações"
           disabled={!isNotificacoesEnabled}
           rightElement={
             <Switch
@@ -97,8 +97,8 @@ export default function NotificationsScreen({
             <Text style={styles.settingsInfoTitle}>Como isso funciona</Text>
           </View>
           <Text style={styles.settingsInfoText}>
-            Ao desativar as notificacoes gerais, os canais complementares ficam pausados dentro do
-            app ate voce reativar os avisos.
+            Ao desativar as notificações gerais, os canais complementares ficam pausados dentro do
+            app até você reativar os avisos.
           </Text>
         </View>
 

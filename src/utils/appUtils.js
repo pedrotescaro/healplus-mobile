@@ -188,7 +188,7 @@ export const createDefaultAppointments = () => {
       hora: '11',
       min: '00',
       paciente: 'Carlos Eduardo Lima',
-      tipo: 'Avaliacao Fotografica',
+      tipo: 'Avaliação Fotográfica',
       status: 'Confirmado',
     },
     {

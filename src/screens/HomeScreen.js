@@ -31,14 +31,14 @@ export default function HomeScreen({
         </TouchableOpacity>
 
         <View style={styles.homeHeroCard}>
-          <Text style={styles.homeHeroTitle}>Ola, Dr. {userName.split(' ')[0]}.</Text>
-          <Text style={styles.homeHeroSubtitle}>Sua central de gestao inteligente de feridas.</Text>
+          <Text style={styles.homeHeroTitle}>Olá, Dr. {userName.split(' ')[0]}.</Text>
+          <Text style={styles.homeHeroSubtitle}>Sua central de gestão inteligente de feridas.</Text>
         </View>
 
         <View style={styles.homeQuickPills}>
           <TouchableOpacity style={styles.homeQuickPill} onPress={onOpenNewEvaluation}>
             <Ionicons name="create-outline" size={14} color={colors.primary} />
-            <Text style={styles.homeQuickPillText}>Avaliacao</Text>
+            <Text style={styles.homeQuickPillText}>Avaliação</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.homeQuickPill} onPress={onOpenPatients}>
             <Ionicons name="people" size={14} color={colors.primary} />
@@ -46,11 +46,11 @@ export default function HomeScreen({
           </TouchableOpacity>
           <TouchableOpacity style={styles.homeQuickPill} onPress={onOpenReport}>
             <Ionicons name="document-text" size={14} color={colors.primary} />
-            <Text style={styles.homeQuickPillText}>Relatorio</Text>
+            <Text style={styles.homeQuickPillText}>Relatório</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.homeSectionHeading}>Evolucao de casos</Text>
+        <Text style={styles.homeSectionHeading}>Evolução de casos</Text>
         <View style={styles.homeStatsGrid}>
           <View style={styles.statBox}>
             <View style={styles.statHeaderCentered}>
@@ -64,19 +64,19 @@ export default function HomeScreen({
               <Ionicons name="clipboard-outline" size={32} color={colors.primary} />
               <Text style={styles.statValue}>{totalAvaliacoes}</Text>
             </View>
-            <Text style={styles.statLabel}>Novas Avaliacoes</Text>
+            <Text style={styles.statLabel}>Novas Avaliações</Text>
           </View>
         </View>
 
-        <Text style={styles.homeSectionHeading}>Atalhos Rapidos</Text>
+        <Text style={styles.homeSectionHeading}>Atalhos Rápidos</Text>
         <View style={styles.gridContainer}>
           <TouchableOpacity style={styles.gridItem} onPress={onOpenNewEvaluation}>
             <Ionicons name="create-outline" size={36} color={colors.primary} />
-            <Text style={styles.gridItemText}>Nova Avaliacao</Text>
+            <Text style={styles.gridItemText}>Nova Avaliação</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.gridItem} onPress={onOpenReport}>
             <Ionicons name="document-text-outline" size={36} color={colors.primary} />
-            <Text style={styles.gridItemText}>Gerar Relatorio</Text>
+            <Text style={styles.gridItemText}>Gerar Relatório</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.gridItem} onPress={onOpenPatients}>
             <Ionicons name="people-outline" size={36} color={colors.primary} />

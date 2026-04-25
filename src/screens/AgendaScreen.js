@@ -37,10 +37,10 @@ export default function AgendaScreen({
         </View>
 
         <View style={styles.agendaMonthSummaryCard}>
-          <Text style={styles.agendaMonthSummaryTitle}>Visao do mes</Text>
+          <Text style={styles.agendaMonthSummaryTitle}>Visão do mês</Text>
           <Text style={styles.agendaMonthSummaryValue}>{totalConsultasMes} atendimentos</Text>
           <Text style={styles.agendaMonthSummaryText}>
-            Use as setas para navegar entre os meses e toque em `+` para adicionar um novo horario.
+            Use as setas para navegar entre os meses e toque em `+` para adicionar um novo horário.
           </Text>
         </View>
 
@@ -81,7 +81,7 @@ export default function AgendaScreen({
           <View style={styles.agendaEmptyCard}>
             <Ionicons name="calendar-clear-outline" size={36} color={colors.textSecondary} />
             <Text style={styles.emptyStateTitle}>Nenhum atendimento agendado</Text>
-            <Text style={styles.emptyStateText}>Toque no botao `+` para cadastrar um novo atendimento nesta data.</Text>
+            <Text style={styles.emptyStateText}>Toque no botão `+` para cadastrar um novo atendimento nesta data.</Text>
           </View>
         ) : (
           consultasDoDia.map(consulta => {

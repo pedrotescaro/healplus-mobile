@@ -30,7 +30,7 @@ export default function ForgotPasswordScreen({ styles, colors, onClose, onContin
           <Image style={styles.forgotHeroLogoMain} source={LOGO_IMAGE} resizeMode="contain" />
           <View style={styles.forgotHeroMiniCard}>
             <Ionicons name="lock-closed" size={22} color={colors.primary} />
-            <Text style={styles.forgotHeroMiniCardText}>Redefinicao segura</Text>
+            <Text style={styles.forgotHeroMiniCardText}>Redefinição segura</Text>
           </View>
         </View>
 
@@ -38,8 +38,8 @@ export default function ForgotPasswordScreen({ styles, colors, onClose, onContin
 
         <View style={styles.forgotInfoBlock}>
           <Text style={styles.forgotInfoText}>
-            <Text style={styles.forgotInfoStrong}>Atencao:</Text> o Heal+ nao solicita sua senha por
-            WhatsApp, ligacao ou fora dos canais oficiais do aplicativo.
+            <Text style={styles.forgotInfoStrong}>Atenção:</Text> o Heal+ não solicita sua senha por
+            WhatsApp, ligação ou fora dos canais oficiais do aplicativo.
           </Text>
         </View>
 

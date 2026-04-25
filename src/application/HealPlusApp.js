@@ -1286,13 +1286,13 @@ function AppContent() {
 
   const handleGerarRelatorio = async () => {
     if (!relatorioPaciente || !selectedPacienteRelatorio) {
-      Alert.alert('Aviso', 'Selecione um paciente para gerar o relat?rio.');
+      Alert.alert('Aviso', 'Selecione um paciente para gerar o relatório.');
       return;
     }
     if (!activeReportEval) {
       Alert.alert(
         'Aviso',
-        'Selecione uma avalia??o cl?nica para exportar no relat?rio.'
+        'Selecione uma avaliação clínica para exportar no relatório.'
       );
       return;
     }
@@ -1305,7 +1305,7 @@ function AppContent() {
     if (!reportInfo) {
       Alert.alert(
         'Aviso',
-        'N?o foi poss?vel estruturar os dados do relat?rio com esta avalia??o.'
+        'Não foi possível estruturar os dados do relatório com esta avaliação.'
       );
       return;
     }
@@ -1325,19 +1325,19 @@ function AppContent() {
         await exportHtmlToPdfReport(html);
       }
     } catch (error) {
-      Alert.alert('Erro', 'N?o foi poss?vel gerar o PDF: ' + error.message);
+      Alert.alert('Erro', 'Não foi possível gerar o PDF: ' + error.message);
     }
   };
 
   const handleExportarComparativo = async () => {
     if (!comparePatient) {
-      Alert.alert('Aviso', 'Selecione um paciente para exportar a compara??o.');
+      Alert.alert('Aviso', 'Selecione um paciente para exportar a comparação.');
       return;
     }
     if (!compareEvalA || !compareEvalB) {
       Alert.alert(
         'Aviso',
-        'Selecione duas avalia??es para comparar antes de exportar.'
+        'Selecione duas avaliações para comparar antes de exportar.'
       );
       return;
     }
@@ -1353,7 +1353,7 @@ function AppContent() {
     } catch (error) {
       Alert.alert(
         'Erro',
-        'N?o foi poss?vel gerar o PDF comparativo: ' + error.message
+        'Não foi possível gerar o PDF comparativo: ' + error.message
       );
     }
   };

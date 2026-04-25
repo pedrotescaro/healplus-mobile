@@ -40,7 +40,7 @@ export default function ReportsScreen({
         <TouchableOpacity onPress={onBackHome} style={{ padding: 5 }}>
           <Ionicons name="arrow-back" size={26} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.relatorioHeaderTitle}>Gerar Relatorio</Text>
+        <Text style={styles.relatorioHeaderTitle}>Gerar Relatório</Text>
         <Ionicons name="document-text" size={26} color={colors.primary} />
       </View>
 
@@ -83,7 +83,7 @@ export default function ReportsScreen({
           ) : null}
         </View>
 
-        <Text style={styles.formLabel}>Avaliacao Clinica</Text>
+        <Text style={styles.formLabel}>Avaliação Clínica</Text>
         <View style={{ zIndex: 9, marginBottom: 15 }}>
           <TouchableOpacity
             style={[styles.inputWithIconFlex, !selectedPacienteRelatorio && { opacity: 0.6 }]}
@@ -101,7 +101,7 @@ export default function ReportsScreen({
               {activeReportEval
                 ? patientEvalLabel(activeReportEval)
                 : selectedPacienteRelatorio
-                  ? 'Escolher avaliacao...'
+                  ? 'Escolher avaliação...'
                   : 'Selecione primeiro o paciente'}
             </Text>
             <Ionicons name={showEvalDropdown ? 'chevron-up' : 'chevron-down'} size={20} color={colors.icon} />
@@ -111,7 +111,7 @@ export default function ReportsScreen({
             <View style={styles.dropdownContainer}>
               {relatorioPatientEvals.length === 0 ? (
                 <View style={{ padding: 14 }}>
-                  <Text style={styles.dropdownText}>Nenhuma avaliacao encontrada.</Text>
+                  <Text style={styles.dropdownText}>Nenhuma avaliação encontrada.</Text>
                 </View>
               ) : (
                 relatorioPatientEvals.map(avaliacao => (
@@ -131,11 +131,11 @@ export default function ReportsScreen({
           ) : null}
         </View>
 
-        <Text style={[styles.formLabel, { marginTop: 20, marginBottom: 15 }]}>Incluir no Relatorio</Text>
+        <Text style={[styles.formLabel, { marginTop: 20, marginBottom: 15 }]}>Incluir no Relatório</Text>
         <CustomCheckbox label="TIMERS" isChecked={incTimers} onPress={() => setIncTimers(!incTimers)} colors={colors} styles={styles} />
         <CustomCheckbox label="Fotos Comparativas" isChecked={incFotos} onPress={() => setIncFotos(!incFotos)} colors={colors} styles={styles} />
-        <CustomCheckbox label="Analise AI" isChecked={incAnalise} onPress={() => setIncAnalise(!incAnalise)} colors={colors} styles={styles} />
-        <CustomCheckbox label="Notas e Observacoes" isChecked={incNotas} onPress={() => setIncNotas(!incNotas)} colors={colors} styles={styles} />
+        <CustomCheckbox label="Análise AI" isChecked={incAnalise} onPress={() => setIncAnalise(!incAnalise)} colors={colors} styles={styles} />
+        <CustomCheckbox label="Notas e Observações" isChecked={incNotas} onPress={() => setIncNotas(!incNotas)} colors={colors} styles={styles} />
 
         <Text style={[styles.formLabel, { marginTop: 25, marginBottom: 15 }]}>Exportar Como</Text>
         <View style={styles.exportCardsRow}>
@@ -167,7 +167,7 @@ export default function ReportsScreen({
           disabled={!relatorioPaciente}
           onPress={onGenerateReport}
         >
-          <Text style={styles.btnEntrarText}>Gerar Relatorio</Text>
+          <Text style={styles.btnEntrarText}>Gerar Relatório</Text>
         </TouchableOpacity>
       </ScrollView>
 

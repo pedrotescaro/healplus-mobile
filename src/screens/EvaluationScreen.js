@@ -23,16 +23,16 @@ import {
 
 const PAIN_LABELS = [
   'Sem Dor',
-  'Minima',
+  'Mínima',
   'Leve',
-  'Incomoda',
+  'Incômoda',
   'Moderada',
   'Desconforto',
   'Intensa',
   'Muito Intensa',
   'Forte',
-  'Insuportavel',
-  'Maxima',
+  'Insuportável',
+  'Máxima',
 ];
 
 function renderMedicationFields({ base, form, updateField, colors, styles }) {
@@ -118,7 +118,7 @@ export default function EvaluationScreen({
               <View style={{ flex: 1, marginLeft: 15 }}>
                 <Text style={{ color: colors.text, fontSize: 16, fontWeight: '600' }}>Tirar Foto</Text>
                 <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 2 }}>
-                  Abrir a camera do dispositivo
+                  Abrir a câmera do dispositivo
                 </Text>
               </View>
               {isImagePickerBusy ? (
@@ -157,7 +157,7 @@ export default function EvaluationScreen({
       <ScrollView style={styles.homeScroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.pageTitleCentralized}>{avaliacaoPageTitle}</Text>
         <Text style={styles.pageSubtitleCentralized}>
-          Anamnese inspirada no arquivo enviado, adaptada para Expo com persistencia local
+          Anamnese inspirada no arquivo enviado, adaptada para Expo com persistência local
         </Text>
 
         <TouchableOpacity
@@ -227,7 +227,7 @@ export default function EvaluationScreen({
 
             <View style={styles.formRow}>
               <View style={styles.formCol}>
-                <Text style={styles.formLabel}>Profissao</Text>
+                <Text style={styles.formLabel}>Profissão</Text>
                 <TextInput
                   style={styles.formInput}
                   value={form.profissao}
@@ -313,7 +313,7 @@ export default function EvaluationScreen({
             </TouchableOpacity>
 
             <View style={{ height: 1, backgroundColor: colors.borderLight, marginVertical: 15 }} />
-            <Text style={styles.formLabel}>Dimensoes e Caracteristicas Gerais</Text>
+            <Text style={styles.formLabel}>Dimensões e Características Gerais</Text>
 
             <View style={styles.formRow}>
               <View style={styles.formCol}>
@@ -345,7 +345,7 @@ export default function EvaluationScreen({
             />
 
             <DropdownField
-              label="Localizacao"
+              label="Localização"
               value={form.localizacao_ferida}
               optionsList={FORM_OPTIONS.localizacaoFerida}
               fieldKey="localizacao_ferida"
@@ -360,7 +360,7 @@ export default function EvaluationScreen({
               style={[styles.formInput, { marginBottom: 10 }]}
               value={form.tempo_evolucao}
               onChangeText={text => updateField('tempo_evolucao', text)}
-              placeholder="Tempo de Evolucao"
+              placeholder="Tempo de Evolução"
               placeholderTextColor={colors.placeholder}
             />
 
@@ -386,7 +386,7 @@ export default function EvaluationScreen({
               />
             ) : null}
 
-            <Text style={styles.formLabel}>Avaliacao do Leito da Ferida (soma max. 100%)</Text>
+            <Text style={styles.formLabel}>Avaliação do Leito da Ferida (soma máx. 100%)</Text>
             <View style={styles.formRow}>
               <View style={styles.formCol}>
                 <TextInput
@@ -394,7 +394,7 @@ export default function EvaluationScreen({
                   keyboardType="numeric"
                   value={form.percentual_granulacao_leito}
                   onChangeText={text => handleTissuePercentageChange('percentual_granulacao_leito', text)}
-                  placeholder="Granulacao (%)"
+                  placeholder="Granulação (%)"
                   placeholderTextColor={colors.placeholder}
                 />
               </View>
@@ -404,7 +404,7 @@ export default function EvaluationScreen({
                   keyboardType="numeric"
                   value={form.percentual_epitelizacao_leito}
                   onChangeText={text => handleTissuePercentageChange('percentual_epitelizacao_leito', text)}
-                  placeholder="Epitelizacao (%)"
+                  placeholder="Epitelização (%)"
                   placeholderTextColor={colors.placeholder}
                 />
               </View>
@@ -492,11 +492,11 @@ export default function EvaluationScreen({
             <View style={styles.tissueLegendRow}>
               <View style={styles.tissueLegendItem}>
                 <View style={[styles.tissueLegendDot, { backgroundColor: '#EF4444' }]} />
-                <Text style={styles.tissueLegendText}>Granulacao</Text>
+                <Text style={styles.tissueLegendText}>Granulação</Text>
               </View>
               <View style={styles.tissueLegendItem}>
                 <View style={[styles.tissueLegendDot, { backgroundColor: '#EC4899' }]} />
-                <Text style={styles.tissueLegendText}>Epitelizacao</Text>
+                <Text style={styles.tissueLegendText}>Epitelização</Text>
               </View>
               <View style={styles.tissueLegendItem}>
                 <View style={[styles.tissueLegendDot, { backgroundColor: '#F59E0B' }]} />
@@ -516,7 +516,7 @@ export default function EvaluationScreen({
         >
           <View style={styles.accordionTitleRow}>
             <Ionicons name="medkit-outline" size={24} color="#3B82F6" />
-            <Text style={styles.accordionTitleText}>I - Infeccao e Inflamacao</Text>
+            <Text style={styles.accordionTitleText}>I - Infecção e Inflamação</Text>
           </View>
           <Ionicons name={expandedSection === 'item-2' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textSecondary} />
         </TouchableOpacity>
@@ -573,21 +573,21 @@ export default function EvaluationScreen({
               placeholderTextColor={colors.placeholder}
             />
 
-            <Text style={styles.formLabel}>Sinais de Inflamacao</Text>
+            <Text style={styles.formLabel}>Sinais de Inflamação</Text>
             <CheckItem label="Rubor" value={form.inflamacao_rubor} onPress={() => toggleBool('inflamacao_rubor')} colors={colors} styles={styles} />
             <CheckItem label="Calor" value={form.inflamacao_calor} onPress={() => toggleBool('inflamacao_calor')} colors={colors} styles={styles} />
             <CheckItem label="Edema" value={form.inflamacao_edema} onPress={() => toggleBool('inflamacao_edema')} colors={colors} styles={styles} />
             <CheckItem label="Dor Local" value={form.inflamacao_dor_local} onPress={() => toggleBool('inflamacao_dor_local')} colors={colors} styles={styles} />
-            <CheckItem label="Perda de Funcao" value={form.inflamacao_perda_funcao} onPress={() => toggleBool('inflamacao_perda_funcao')} colors={colors} styles={styles} />
+            <CheckItem label="Perda de Função" value={form.inflamacao_perda_funcao} onPress={() => toggleBool('inflamacao_perda_funcao')} colors={colors} styles={styles} />
 
-            <Text style={[styles.formLabel, { marginTop: 12 }]}>Sinais de Infeccao Local</Text>
+            <Text style={[styles.formLabel, { marginTop: 12 }]}>Sinais de Infecção Local</Text>
             <CheckItem label="Eritema Perilesional" value={form.infeccao_eritema_perilesional} onPress={() => toggleBool('infeccao_eritema_perilesional')} colors={colors} styles={styles} />
             <CheckItem label="Calor Local" value={form.infeccao_calor_local} onPress={() => toggleBool('infeccao_calor_local')} colors={colors} styles={styles} />
             <CheckItem label="Edema" value={form.infeccao_edema} onPress={() => toggleBool('infeccao_edema')} colors={colors} styles={styles} />
             <CheckItem label="Dor Local" value={form.infeccao_dor_local} onPress={() => toggleBool('infeccao_dor_local')} colors={colors} styles={styles} />
             <CheckItem label="Exsudato Purulento" value={form.infeccao_exsudato} onPress={() => toggleBool('infeccao_exsudato')} colors={colors} styles={styles} />
-            <CheckItem label="Odor Fetido" value={form.infeccao_odor} onPress={() => toggleBool('infeccao_odor')} colors={colors} styles={styles} />
-            <CheckItem label="Retardo na Cicatrizacao" value={form.infeccao_retardo_cicatrizacao} onPress={() => toggleBool('infeccao_retardo_cicatrizacao')} colors={colors} styles={styles} />
+            <CheckItem label="Odor Fétido" value={form.infeccao_odor} onPress={() => toggleBool('infeccao_odor')} colors={colors} styles={styles} />
+            <CheckItem label="Retardo na Cicatrização" value={form.infeccao_retardo_cicatrizacao} onPress={() => toggleBool('infeccao_retardo_cicatrizacao')} colors={colors} styles={styles} />
             <CheckItem label="Cultura da Ferida Realizada?" value={form.cultura_realizada} onPress={() => toggleBool('cultura_realizada')} colors={colors} styles={styles} />
 
             {form.cultura_realizada ? (
@@ -638,7 +638,7 @@ export default function EvaluationScreen({
               styles={styles}
             />
             <DropdownField
-              label="Consistencia"
+              label="Consistência"
               value={form.consistencia_exsudato}
               optionsList={FORM_OPTIONS.consistenciaExsudato}
               fieldKey="consistencia_exsudato"
@@ -665,7 +665,7 @@ export default function EvaluationScreen({
         {expandedSection === 'item-4' ? (
           <View style={styles.accordionContent}>
             <DropdownField
-              label="Caracteristicas das Bordas"
+              label="Características das Bordas"
               value={form.bordas_caracteristicas}
               optionsList={FORM_OPTIONS.bordasCaracteristicas}
               fieldKey="bordas_caracteristicas"
@@ -676,7 +676,7 @@ export default function EvaluationScreen({
               styles={styles}
             />
             <DropdownField
-              label="Fixacao das Bordas"
+              label="Fixação das Bordas"
               value={form.fixacao_bordas}
               optionsList={FORM_OPTIONS.fixacaoBordas}
               fieldKey="fixacao_bordas"
@@ -687,7 +687,7 @@ export default function EvaluationScreen({
               styles={styles}
             />
             <DropdownField
-              label="Velocidade de Cicatrizacao"
+              label="Velocidade de Cicatrização"
               value={form.velocidade_cicatrizacao}
               optionsList={FORM_OPTIONS.velocidadeCicatrizacao}
               fieldKey="velocidade_cicatrizacao"
@@ -698,13 +698,13 @@ export default function EvaluationScreen({
               styles={styles}
             />
 
-            <CheckItem label="Presenca de Tuneis ou Cavidade?" value={form.tunel_cavidade} onPress={() => toggleBool('tunel_cavidade')} colors={colors} styles={styles} />
+            <CheckItem label="Presença de Túneis ou Cavidade?" value={form.tunel_cavidade} onPress={() => toggleBool('tunel_cavidade')} colors={colors} styles={styles} />
             {form.tunel_cavidade ? (
               <TextInput
                 style={[styles.formInput, { marginBottom: 10 }]}
                 value={form.localizacao_tunel_cavidade}
                 onChangeText={text => updateField('localizacao_tunel_cavidade', text)}
-                placeholder="Localizacao do tunel/cavidade"
+                placeholder="Localização do túnel/cavidade"
                 placeholderTextColor={colors.placeholder}
               />
             ) : null}
@@ -725,12 +725,12 @@ export default function EvaluationScreen({
               style={[styles.formInput, { marginBottom: 10 }]}
               value={form.pele_perilesional_extensao}
               onChangeText={text => updateField('pele_perilesional_extensao', text)}
-              placeholder="Extensao da alteracao"
+              placeholder="Extensão da alteração"
               placeholderTextColor={colors.placeholder}
             />
 
-            <Text style={styles.formLabel}>Condicao da Pele</Text>
-            <CheckItem label="Integra" value={form.pele_perilesional_integra} onPress={() => toggleBool('pele_perilesional_integra')} colors={colors} styles={styles} />
+            <Text style={styles.formLabel}>Condição da Pele</Text>
+            <CheckItem label="Íntegra" value={form.pele_perilesional_integra} onPress={() => toggleBool('pele_perilesional_integra')} colors={colors} styles={styles} />
             <CheckItem label="Eritematosa" value={form.pele_perilesional_eritematosa} onPress={() => toggleBool('pele_perilesional_eritematosa')} colors={colors} styles={styles} />
             <CheckItem label="Macerada" value={form.pele_perilesional_macerada} onPress={() => toggleBool('pele_perilesional_macerada')} colors={colors} styles={styles} />
             <CheckItem label="Seca e Descamativa" value={form.pele_perilesional_seca_descamativa} onPress={() => toggleBool('pele_perilesional_seca_descamativa')} colors={colors} styles={styles} />
@@ -738,7 +738,7 @@ export default function EvaluationScreen({
             <CheckItem label="Hiperpigmentada" value={form.pele_perilesional_hiperpigmentada} onPress={() => toggleBool('pele_perilesional_hiperpigmentada')} colors={colors} styles={styles} />
             <CheckItem label="Hipopigmentada" value={form.pele_perilesional_hipopigmentada} onPress={() => toggleBool('pele_perilesional_hipopigmentada')} colors={colors} styles={styles} />
             <CheckItem label="Indurada" value={form.pele_perilesional_indurada} onPress={() => toggleBool('pele_perilesional_indurada')} colors={colors} styles={styles} />
-            <CheckItem label="Sensivel" value={form.pele_perilesional_sensivel} onPress={() => toggleBool('pele_perilesional_sensivel')} colors={colors} styles={styles} />
+            <CheckItem label="Sensível" value={form.pele_perilesional_sensivel} onPress={() => toggleBool('pele_perilesional_sensivel')} colors={colors} styles={styles} />
             <CheckItem label="Edema" value={form.pele_perilesional_edema} onPress={() => toggleBool('pele_perilesional_edema')} colors={colors} styles={styles} />
           </View>
         ) : null}
@@ -749,14 +749,14 @@ export default function EvaluationScreen({
         >
           <View style={styles.accordionTitleRow}>
             <Ionicons name="refresh-outline" size={24} color="#3B82F6" />
-            <Text style={styles.accordionTitleText}>R - Reparo e Recomendacoes</Text>
+            <Text style={styles.accordionTitleText}>R - Reparo e Recomendações</Text>
           </View>
           <Ionicons name={expandedSection === 'item-5' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textSecondary} />
         </TouchableOpacity>
 
         {expandedSection === 'item-5' ? (
           <View style={styles.accordionContent}>
-            <Text style={styles.formLabel}>Observacoes e Plano de Tratamento</Text>
+            <Text style={styles.formLabel}>Observações e Plano de Tratamento</Text>
             <TextInput
               style={[styles.formInput, { height: 110, textAlignVertical: 'top', paddingTop: 12, marginBottom: 12 }]}
               multiline
@@ -790,7 +790,7 @@ export default function EvaluationScreen({
 
             <View style={styles.formRow}>
               <View style={styles.formCol}>
-                <Text style={styles.formLabel}>Profissional Responsavel</Text>
+                <Text style={styles.formLabel}>Profissional Responsável</Text>
                 <TextInput
                   style={styles.formInput}
                   value={form.profissional_responsavel}
@@ -826,7 +826,7 @@ export default function EvaluationScreen({
         >
           <View style={styles.accordionTitleRow}>
             <Ionicons name="information-circle-outline" size={24} color="#3B82F6" />
-            <Text style={styles.accordionTitleText}>S - Fatores Sociais e Historico</Text>
+            <Text style={styles.accordionTitleText}>S - Fatores Sociais e Histórico</Text>
           </View>
           <Ionicons name={expandedSection === 'item-6' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textSecondary} />
         </TouchableOpacity>
@@ -834,7 +834,7 @@ export default function EvaluationScreen({
         {expandedSection === 'item-6' ? (
           <View style={styles.accordionContent}>
             <DropdownField
-              label="Nivel de Atividade"
+              label="Nível de Atividade"
               value={form.nivel_atividade}
               optionsList={FORM_OPTIONS.nivelAtividade}
               fieldKey="nivel_atividade"
@@ -845,7 +845,7 @@ export default function EvaluationScreen({
               styles={styles}
             />
             <DropdownField
-              label="Compreensao e Adesao"
+              label="Compreensão e Adesão"
               value={form.compreensao_adesao}
               optionsList={FORM_OPTIONS.compreensaoAdesao}
               fieldKey="compreensao_adesao"
@@ -865,7 +865,7 @@ export default function EvaluationScreen({
               placeholderTextColor={colors.placeholder}
             />
 
-            <CheckItem label="Pratica atividade fisica?" value={form.pratica_atividade_fisica} onPress={() => toggleBool('pratica_atividade_fisica')} colors={colors} styles={styles} />
+            <CheckItem label="Prática atividade física?" value={form.pratica_atividade_fisica} onPress={() => toggleBool('pratica_atividade_fisica')} colors={colors} styles={styles} />
             {form.pratica_atividade_fisica ? (
               <>
                 <TextInput
@@ -879,39 +879,39 @@ export default function EvaluationScreen({
                   style={[styles.formInput, { marginBottom: 10 }]}
                   value={form.frequencia_atividade}
                   onChangeText={text => updateField('frequencia_atividade', text)}
-                  placeholder="Frequencia"
+                  placeholder="Frequência"
                   placeholderTextColor={colors.placeholder}
                 />
               </>
             ) : null}
 
-            <CheckItem label="Ingere alcool?" value={form.ingestao_alcool} onPress={() => toggleBool('ingestao_alcool')} colors={colors} styles={styles} />
+            <CheckItem label="Ingere álcool?" value={form.ingestao_alcool} onPress={() => toggleBool('ingestao_alcool')} colors={colors} styles={styles} />
             {form.ingestao_alcool ? (
               <TextInput
                 style={[styles.formInput, { marginBottom: 10 }]}
                 value={form.frequencia_alcool}
                 onChangeText={text => updateField('frequencia_alcool', text)}
-                placeholder="Frequencia"
+                placeholder="Frequência"
                 placeholderTextColor={colors.placeholder}
               />
             ) : null}
 
-            <CheckItem label="E fumante?" value={form.fumante} onPress={() => toggleBool('fumante')} colors={colors} styles={styles} />
+            <CheckItem label="É fumante?" value={form.fumante} onPress={() => toggleBool('fumante')} colors={colors} styles={styles} />
 
-            <Text style={styles.formLabel}>Avaliacao Nutricional</Text>
+            <Text style={styles.formLabel}>Avaliação Nutricional</Text>
             <TextInput
               style={[styles.formInput, { height: 80, textAlignVertical: 'top', paddingTop: 12, marginBottom: 10 }]}
               multiline
               value={form.estado_nutricional}
               onChangeText={text => updateField('estado_nutricional', text)}
-              placeholder="Alimentacao, peso, etc."
+              placeholder="Alimentação, peso, etc."
               placeholderTextColor={colors.placeholder}
             />
             <TextInput
               style={styles.formInput}
               value={form.ingestao_agua_dia}
               onChangeText={text => updateField('ingestao_agua_dia', text)}
-              placeholder="Ingestao de agua por dia"
+              placeholder="Ingestão de água por dia"
               placeholderTextColor={colors.placeholder}
             />
           </View>
@@ -923,7 +923,7 @@ export default function EvaluationScreen({
         >
           <View style={styles.accordionTitleRow}>
             <Ionicons name="medkit-outline" size={24} color="#3B82F6" />
-            <Text style={styles.accordionTitleText}>Historico Clinico e Comorbidades</Text>
+            <Text style={styles.accordionTitleText}>Histórico Clínico e Comorbidades</Text>
           </View>
           <Ionicons name={expandedSection === 'item-7' ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textSecondary} />
         </TouchableOpacity>
@@ -939,7 +939,7 @@ export default function EvaluationScreen({
               placeholderTextColor={colors.placeholder}
             />
 
-            <Text style={styles.formLabel}>Historico de Cicatrizacao</Text>
+            <Text style={styles.formLabel}>Histórico de Cicatrização</Text>
             <TextInput
               style={[styles.formInput, { height: 70, textAlignVertical: 'top', paddingTop: 12, marginBottom: 10 }]}
               multiline
@@ -971,11 +971,11 @@ export default function EvaluationScreen({
               />
             ) : null}
 
-            <Text style={styles.formLabel}>Funcao Vascular</Text>
-            <CheckItem label="Claudicacao Intermitente" value={form.claudicacao_intermitente} onPress={() => toggleBool('claudicacao_intermitente')} colors={colors} styles={styles} />
+            <Text style={styles.formLabel}>Função Vascular</Text>
+            <CheckItem label="Claudicação Intermitente" value={form.claudicacao_intermitente} onPress={() => toggleBool('claudicacao_intermitente')} colors={colors} styles={styles} />
             <CheckItem label="Dor em Repouso" value={form.dor_repouso} onPress={() => toggleBool('dor_repouso')} colors={colors} styles={styles} />
             <DropdownField
-              label="Pulsos Perifericos"
+              label="Pulsos Periféricos"
               value={form.pulsos_perifericos}
               optionsList={FORM_OPTIONS.pulsosPerifericos}
               fieldKey="pulsos_perifericos"
@@ -991,7 +991,7 @@ export default function EvaluationScreen({
               <CheckItem key={key} label={label} value={form[key]} onPress={() => toggleBool(key)} colors={colors} styles={styles} />
             ))}
 
-            <Text style={styles.formLabel}>Outras Condicoes</Text>
+            <Text style={styles.formLabel}>Outras Condições</Text>
             <TextInput
               style={[styles.formInput, { height: 70, textAlignVertical: 'top', paddingTop: 12, marginBottom: 12 }]}
               multiline

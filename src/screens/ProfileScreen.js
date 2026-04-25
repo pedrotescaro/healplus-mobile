@@ -63,12 +63,12 @@ export default function ProfileScreen({
         <View style={styles.metricsCard}>
           <View style={styles.metricsHeader}>
             <Ionicons name="bar-chart-outline" size={20} color="#3B82F6" />
-            <Text style={styles.metricsTitle}>Metricas de Performance</Text>
+            <Text style={styles.metricsTitle}>Métricas de Performance</Text>
           </View>
           <View style={styles.metricsRow}>
             <View style={styles.metricCol}>
               <Text style={[styles.metricValue, { color: '#3B82F6' }]}>{totalAvaliacoes}</Text>
-              <Text style={styles.metricLabel}>Avaliacoes{`\n`}este mes</Text>
+              <Text style={styles.metricLabel}>Avaliações{`\n`}este mês</Text>
             </View>
             <View style={styles.metricCol}>
               <Text style={[styles.metricValue, { color: '#10B981' }]}>{pacientesAtivos.length}</Text>
@@ -78,7 +78,7 @@ export default function ProfileScreen({
               <Text style={[styles.metricValue, { color: '#F59E0B', fontSize: 18, marginTop: 4, marginBottom: 2 }]}>
                 Local{`\n`}DB
               </Text>
-              <Text style={styles.metricLabel}>Persistencia{`\n`}Ativa</Text>
+              <Text style={styles.metricLabel}>Persistência{`\n`}Ativa</Text>
             </View>
           </View>
         </View>
@@ -90,7 +90,7 @@ export default function ProfileScreen({
           iconColor="#8B5CF6"
           iconBg="rgba(139, 92, 246, 0.15)"
           title="Editar Perfil"
-          subtitle="Nome, foto e informacoes"
+          subtitle="Nome, foto e informações"
           onPress={onOpenEditProfile}
           showChevron
           colors={colors}
@@ -101,8 +101,8 @@ export default function ProfileScreen({
           icon="notifications"
           iconColor="#F59E0B"
           iconBg="rgba(245, 158, 11, 0.15)"
-          title="Notificacoes"
-          subtitle={isNotificacoesEnabled ? 'Push, email e alertas' : 'Notificacoes desativadas'}
+          title="Notificações"
+          subtitle={isNotificacoesEnabled ? 'Push, email e alertas' : 'Notificações desativadas'}
           onPress={onOpenNotifications}
           rightElement={
             <Switch
@@ -121,7 +121,7 @@ export default function ProfileScreen({
           iconColor="#10B981"
           iconBg="rgba(16, 185, 129, 0.15)"
           title="Privacidade"
-          subtitle="Dados e permissoes"
+          subtitle="Dados e permissões"
           onPress={onOpenPrivacy}
           showChevron
           colors={colors}
@@ -153,7 +153,7 @@ export default function ProfileScreen({
           iconColor="#8B5CF6"
           iconBg="rgba(139, 92, 246, 0.15)"
           title="Sobre o App"
-          subtitle={`Versao ${APP_VERSION}`}
+          subtitle={`Versão ${APP_VERSION}`}
           onPress={onOpenAbout}
           showChevron
           colors={colors}

@@ -40,7 +40,7 @@ export const SCREEN_SKELETON_FADE_DURATION_MS = 260;
 export const MONTH_NAMES_PT = [
   'Janeiro',
   'Fevereiro',
-  'Marco',
+  'Março',
   'Abril',
   'Maio',
   'Junho',
@@ -59,18 +59,18 @@ export const WEEKDAY_SHORT_PT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'
 export const WEEKDAY_FULL_PT = [
   'Domingo',
   'Segunda-feira',
-  'Terca-feira',
+  'Terça-feira',
   'Quarta-feira',
   'Quinta-feira',
   'Sexta-feira',
-  'Sabado',
+  'Sábado',
 ];
 
 export const AGENDA_TYPE_OPTIONS = [
   'Troca de Curativo',
   'Retorno',
   'Follow-up',
-  'Avaliacao Fotografica',
+  'Avaliação Fotográfica',
   'Wound Care',
   'Primeira Consulta',
 ];
@@ -78,15 +78,15 @@ export const AGENDA_TYPE_OPTIONS = [
 export const AGENDA_STATUS_OPTIONS = ['Confirmado', 'Pendente', 'Cancelado'];
 
 export const FORM_OPTIONS = {
-  estadoCivil: ['Solteiro(a)', 'Casado(a)', 'Uniao estavel', 'Divorciado(a)', 'Viuvo(a)'],
-  nivelAtividade: ['Acamado', 'Sedentario', 'Parcialmente ativo', 'Ativo'],
+  estadoCivil: ['Solteiro(a)', 'Casado(a)', 'União estável', 'Divorciado(a)', 'Viúvo(a)'],
+  nivelAtividade: ['Acamado', 'Sedentário', 'Parcialmente ativo', 'Ativo'],
   compreensaoAdesao: ['Boa', 'Regular', 'Baixa'],
-  pulsosPerifericos: ['Presentes', 'Diminuídos', 'Ausentes', 'Nao avaliado'],
+  pulsosPerifericos: ['Presentes', 'Diminuídos', 'Ausentes', 'Não avaliado'],
   localizacaoFerida: [
-    'Regiao Sacral (Posterior)',
+    'Região Sacral (Posterior)',
     'Calcanhar Direito',
     'Calcanhar Esquerdo',
-    'Torax (Anterior)',
+    'Tórax (Anterior)',
     'Costas (Posterior)',
     'Perna Esquerda (Anterior)',
     'Perna Direita (Anterior)',
@@ -96,12 +96,12 @@ export const FORM_OPTIONS = {
     'MMSS',
   ],
   etiologiaFerida: [
-    'Lesao por Pressao',
-    'Ulcera Venosa',
-    'Ulcera Arterial',
-    'Pe Diabetico',
-    'Ferida Cirurgica',
-    'Ferida Traumatica',
+    'Lesão por Pressão',
+    'Úlcera Venosa',
+    'Úlcera Arterial',
+    'Pé Diabético',
+    'Ferida Cirúrgica',
+    'Ferida Traumática',
     'Queimadura',
     'Outra',
   ],
@@ -109,8 +109,8 @@ export const FORM_OPTIONS = {
   tipoExsudato: ['Seroso', 'Sanguinolento', 'Serossanguinolento', 'Purulento', 'Seropurulento'],
   consistenciaExsudato: ['Fina', 'Viscosa', 'Espessa'],
   bordasCaracteristicas: ['Regulares', 'Irregulares', 'Elevadas', 'Maceradas', 'Epitelizadas'],
-  fixacaoBordas: ['Aderidas', 'Nao aderidas', 'Descoladas'],
-  velocidadeCicatrizacao: ['Rapida', 'Moderada', 'Lenta', 'Estagnada'],
+  fixacaoBordas: ['Aderidas', 'Não aderidas', 'Descoladas'],
+  velocidadeCicatrizacao: ['Rápida', 'Moderada', 'Lenta', 'Estagnada'],
   pelePerilesionalUmidade: ['Seca', 'Hidratada', 'Macerada', 'Edemaciada'],
 };
 
@@ -123,13 +123,13 @@ export const COMORBIDADES_CONFIG = [
   ['obesidade', 'Obesidade'],
   ['cardiopatia', 'Cardiopatia'],
   ['dpoc', 'DPOC'],
-  ['doenca_hematologica', 'Doenca Hematologica'],
-  ['doenca_vascular', 'Doenca Vascular'],
-  ['demencia_senil', 'Demencia Senil'],
-  ['insuficiencia_renal', 'Insuficiencia Renal'],
-  ['hanseniase', 'Hanseniase'],
-  ['insuficiencia_hepatica', 'Insuficiencia Hepatica'],
-  ['doenca_autoimune', 'Doenca Autoimune'],
+  ['doenca_hematologica', 'Doença Hematológica'],
+  ['doenca_vascular', 'Doença Vascular'],
+  ['demencia_senil', 'Demência Senil'],
+  ['insuficiencia_renal', 'Insuficiência Renal'],
+  ['hanseniase', 'Hanseníase'],
+  ['insuficiencia_hepatica', 'Insuficiência Hepática'],
+  ['doenca_autoimune', 'Doença Autoimune'],
 ];
 
 export const MEDICAMENTOS_CONFIG = [
@@ -141,6 +141,6 @@ export const MEDICAMENTOS_CONFIG = [
   ['drogas_vasoativa', 'Drogas Vasoativas'],
   ['suplemento', 'Suplemento'],
   ['anticoagulante', 'Anticoagulante'],
-  ['vitaminico', 'Vitaminico'],
+  ['vitaminico', 'Vitamínico'],
   ['antirretroviral', 'Antirretroviral'],
 ];

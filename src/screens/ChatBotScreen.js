@@ -43,18 +43,18 @@ export default function ChatBotScreen({
       >
         {messages.length === 0 ? (
           <View style={styles.chatEmptyState}>
-            <Text style={styles.chatGreeting}>Oi, {userName.split(' ')[0]}. O que voce quer pesquisar?</Text>
+            <Text style={styles.chatGreeting}>Oi, {userName.split(' ')[0]}. O que você quer pesquisar?</Text>
             <Text style={styles.chatGreetingSubtext}>
-              Posso consultar pacientes, avaliacoes e agenda usando so o banco local do Heal+.
+              Posso consultar pacientes, avaliações e agenda usando só o banco local do Heal+.
             </Text>
             <View style={styles.chatSuggestionsRow}>
               <TouchableOpacity style={styles.chatSuggestionCard} onPress={() => onSendChat('Quantos pacientes ativos eu tenho?')}>
-                <Text style={styles.chatSuggestionTitle}>Como voce pode me ajudar?</Text>
+                <Text style={styles.chatSuggestionTitle}>Como você pode me ajudar?</Text>
                 <Text style={styles.chatSuggestionText}>Entenda o que consigo consultar no banco local.</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.chatSuggestionCard} onPress={() => onSendChat('Quais atendimentos eu tenho hoje?')}>
                 <Text style={styles.chatSuggestionTitle}>Resumo do meu dia</Text>
-                <Text style={styles.chatSuggestionText}>Veja retornos e atendimentos ja salvos no app.</Text>
+                <Text style={styles.chatSuggestionText}>Veja retornos e atendimentos já salvos no app.</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -102,7 +102,7 @@ export default function ChatBotScreen({
         </View>
 
         <Text style={styles.chatDisclaimer}>
-          Voce esta conversando com uma IA local. As respostas podem conter erros. Sempre confira.
+          Você está conversando com uma IA local. As respostas podem conter erros. Sempre confira.
         </Text>
       </View>
     </KeyboardAvoidingView>

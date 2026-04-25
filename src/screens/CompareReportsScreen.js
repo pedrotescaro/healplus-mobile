@@ -37,7 +37,7 @@ export default function CompareReportsScreen({
 }) {
   return (
     <View style={styles.homeContainer}>
-      <TopBar title="Comparacao" backTo="Home" colors={colors} styles={styles} onBack={onBack} />
+      <TopBar title="Comparação" backTo="Home" colors={colors} styles={styles} onBack={onBack} />
       <ScrollView style={styles.homeScroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.formLabel}>Selecionar Paciente</Text>
         <View style={{ zIndex: 10, marginBottom: 15 }}>
@@ -63,7 +63,7 @@ export default function CompareReportsScreen({
             <View style={styles.dropdownContainer}>
               {pacientesCompareFilter.length === 0 ? (
                 <View style={{ padding: 14 }}>
-                  <Text style={styles.dropdownText}>Nenhum paciente encontrado com duas avaliacoes.</Text>
+                  <Text style={styles.dropdownText}>Nenhum paciente encontrado com duas avaliações.</Text>
                 </View>
               ) : (
                 pacientesCompareFilter.map(paciente => (
@@ -89,7 +89,7 @@ export default function CompareReportsScreen({
         <View style={{ flexDirection: 'row', gap: 10, marginBottom: 25, zIndex: 9 }}>
           <View style={{ flex: 1 }}>
             <DropdownField
-              label="Relatorio Inicial"
+              label="Relatório Inicial"
               value={compareEvalA ? patientEvalLabel(compareEvalA) : ''}
               optionsList={compareEvals.map(ev => patientEvalLabel(ev))}
               fieldKey="compare_a"
@@ -106,7 +106,7 @@ export default function CompareReportsScreen({
           </View>
           <View style={{ flex: 1 }}>
             <DropdownField
-              label="Relatorio Recente"
+              label="Relatório Recente"
               value={compareEvalB ? patientEvalLabel(compareEvalB) : ''}
               optionsList={compareEvals.map(ev => patientEvalLabel(ev))}
               fieldKey="compare_b"
@@ -128,7 +128,7 @@ export default function CompareReportsScreen({
             <Text style={[styles.pageTitleCentralized, { marginBottom: 20 }]}>Selecione um Paciente</Text>
             {patientsWithCompare.length === 0 ? (
               <Text style={{ color: colors.textSecondary, fontStyle: 'italic', textAlign: 'center', marginBottom: 20, paddingHorizontal: 20 }}>
-                Nenhum paciente possui 2 ou mais avaliacoes para comparar. Adicione novas avaliacoes no painel do paciente.
+                Nenhum paciente possui 2 ou mais avaliações para comparar. Adicione novas avaliações no painel do paciente.
               </Text>
             ) : (
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
@@ -177,7 +177,7 @@ export default function CompareReportsScreen({
                     </View>
                     <Text style={styles.compareCardDate}>{compareEvalA.data || '14/01'}</Text>
                     <View style={styles.compareCardStatRow}>
-                      <Text style={styles.compareCardStatLabel}>Area</Text>
+                      <Text style={styles.compareCardStatLabel}>Área</Text>
                       <Text style={styles.compareCardStatValue}>{compareAreaA.toFixed(1)} cm²</Text>
                     </View>
                     <View style={styles.compareCardStatRow}>
@@ -199,7 +199,7 @@ export default function CompareReportsScreen({
                     </View>
                     <Text style={styles.compareCardDate}>{compareEvalB.data || '28/03'}</Text>
                     <View style={styles.compareCardStatRow}>
-                      <Text style={styles.compareCardStatLabel}>Area</Text>
+                      <Text style={styles.compareCardStatLabel}>Área</Text>
                       <Text style={styles.compareCardStatValue}>{compareAreaB.toFixed(1)} cm²</Text>
                     </View>
                     <View style={styles.compareCardStatRow}>
@@ -234,7 +234,7 @@ export default function CompareReportsScreen({
                 {compareHasValidChart ? (
                   <View style={styles.chartContainer}>
                     <View style={styles.chartHeader}>
-                      <Text style={styles.chartTitle}>Comparativo de Area</Text>
+                      <Text style={styles.chartTitle}>Comparativo de Área</Text>
                       <Text style={[styles.chartBadgeText, { color: compareAreaReductionColor }]}>
                         {compareAreaReductionText}
                       </Text>
@@ -255,7 +255,7 @@ export default function CompareReportsScreen({
                           }}
                         />
                         <Text style={{ marginTop: 8, color: '#8E8E93', fontSize: 12, fontWeight: '500' }}>
-                          {compareEvalA.data?.split(' ')[0] || 'Avaliacao A'}
+                          {compareEvalA.data?.split(' ')[0] || 'Avaliação A'}
                         </Text>
                       </View>
                       <View style={{ alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
@@ -273,14 +273,14 @@ export default function CompareReportsScreen({
                           }}
                         />
                         <Text style={{ marginTop: 8, color: '#10B981', fontSize: 12, fontWeight: 'bold' }}>
-                          {compareEvalB.data?.split(' ')[0] || 'Avaliacao B'}
+                          {compareEvalB.data?.split(' ')[0] || 'Avaliação B'}
                         </Text>
                       </View>
                     </View>
                   </View>
                 ) : null}
 
-                <Text style={styles.homeSectionHeading}>Comparativo Clinico</Text>
+                <Text style={styles.homeSectionHeading}>Comparativo Clínico</Text>
 
                 <View style={styles.comparativoClinicoContainer}>
                   <View style={styles.comparativoRow}>
@@ -291,19 +291,19 @@ export default function CompareReportsScreen({
                       </Text>
                       <Ionicons name="arrow-forward" size={16} color="#10B981" />
                       <Text style={styles.comparativoValTextRowRight}>
-                        {(compareEvalB?.form?.percentual_granulacao_leito || 90) + '% Granulacao'}
+                        {(compareEvalB?.form?.percentual_granulacao_leito || 90) + '% Granulação'}
                       </Text>
                     </View>
                   </View>
                   <View style={styles.comparativoDivider} />
 
                   <View style={styles.comparativoRow}>
-                    <Text style={styles.comparativoLabelTop}>I - Infeccao</Text>
+                    <Text style={styles.comparativoLabelTop}>I - Infecção</Text>
                     <View style={styles.comparativoValRow}>
-                      <Text style={styles.comparativoValTextRowLeft}>Sinais Clinicos</Text>
+                      <Text style={styles.comparativoValTextRowLeft}>Sinais Clínicos</Text>
                       <Ionicons name="arrow-forward" size={16} color="#10B981" />
                       <Text style={styles.comparativoValTextRowRight}>
-                        {compareEvalB?.form?.infeccao_exsudato ? 'Com Infeccao' : 'Sem Infeccao'}
+                        {compareEvalB?.form?.infeccao_exsudato ? 'Com Infecção' : 'Sem Infecção'}
                       </Text>
                     </View>
                   </View>
