@@ -1,5 +1,4 @@
 import { Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 
@@ -91,6 +90,19 @@ const base64ToReportSrc = (base64, mimeType = 'image/jpeg') => {
   return `data:${mimeType || 'image/jpeg'};base64,${base64}`;
 };
 
+const blobToReportSrc = blob =>
+  new Promise((resolve, reject) => {
+    if (typeof FileReader === 'undefined') {
+      resolve('');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+
 const imageUriToReportSrc = async ({ uri, base64, mimeType }) => {
   const base64Src = base64ToReportSrc(base64, mimeType);
   if (base64Src) return base64Src;
@@ -100,10 +112,12 @@ const imageUriToReportSrc = async ({ uri, base64, mimeType }) => {
   if (/^https?:/i.test(uri)) return uri;
 
   try {
-    const localBase64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    return `data:${mimeType || getReportImageMimeType(uri)};base64,${localBase64}`;
+    if (typeof fetch !== 'function') return '';
+
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const blobSrc = await blobToReportSrc(blob);
+    return blobSrc || '';
   } catch (error) {
     console.warn('[report] Não foi possível converter imagem local para o PDF', error);
     return '';
