@@ -23,6 +23,8 @@ const getEvalImageUri = evaluation =>
 
 const getEvalRoiPoints = evaluation => evaluation?.roiPoints || evaluation?.form?.roiPoints || [];
 const getEvalRois = evaluation => normalizeRois(evaluation?.rois || evaluation?.form?.rois);
+const getEvalImageWidth = evaluation => Number(evaluation?.imageWidth || evaluation?.form?.imageWidth || 0) || 0;
+const getEvalImageHeight = evaluation => Number(evaluation?.imageHeight || evaluation?.form?.imageHeight || 0) || 0;
 
 const getEvalArea = evaluation => {
   if (evaluation?.resultados?.areaFeridaCm2) return parseClinicalNumber(evaluation.resultados.areaFeridaCm2);
@@ -274,7 +276,15 @@ export default function CompareReportsScreen({
                       {getEvalImageUri(compareEvalA) ? (
                         <>
                           <Image source={{ uri: getEvalImageUri(compareEvalA) }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
-                          <RoiImageOverlay rois={getEvalRois(compareEvalA)} points={getEvalRoiPoints(compareEvalA)} color={colors.primary} fillColor="rgba(59, 130, 246, 0.18)" showPoints={false} />
+                          <RoiImageOverlay
+                            rois={getEvalRois(compareEvalA)}
+                            points={getEvalRoiPoints(compareEvalA)}
+                            color={colors.primary}
+                            fillColor="rgba(59, 130, 246, 0.18)"
+                            showPoints={false}
+                            imageWidth={getEvalImageWidth(compareEvalA)}
+                            imageHeight={getEvalImageHeight(compareEvalA)}
+                          />
                         </>
                       ) : (
                         <Ionicons name="image-outline" size={32} color={colors.textSecondary} />
@@ -299,7 +309,15 @@ export default function CompareReportsScreen({
                       {getEvalImageUri(compareEvalB) ? (
                         <>
                           <Image source={{ uri: getEvalImageUri(compareEvalB) }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
-                          <RoiImageOverlay rois={getEvalRois(compareEvalB)} points={getEvalRoiPoints(compareEvalB)} color={colors.primary} fillColor="rgba(59, 130, 246, 0.18)" showPoints={false} />
+                          <RoiImageOverlay
+                            rois={getEvalRois(compareEvalB)}
+                            points={getEvalRoiPoints(compareEvalB)}
+                            color={colors.primary}
+                            fillColor="rgba(59, 130, 246, 0.18)"
+                            showPoints={false}
+                            imageWidth={getEvalImageWidth(compareEvalB)}
+                            imageHeight={getEvalImageHeight(compareEvalB)}
+                          />
                         </>
                       ) : (
                         <Ionicons name="image-outline" size={32} color={colors.textSecondary} />
@@ -412,7 +430,15 @@ export default function CompareReportsScreen({
                               {imageUri ? (
                                 <>
                                   <Image source={{ uri: imageUri }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
-                                  <RoiImageOverlay rois={getEvalRois(avaliacao)} points={getEvalRoiPoints(avaliacao)} color={colors.primary} fillColor="rgba(59, 130, 246, 0.18)" showPoints={false} />
+                                  <RoiImageOverlay
+                                    rois={getEvalRois(avaliacao)}
+                                    points={getEvalRoiPoints(avaliacao)}
+                                    color={colors.primary}
+                                    fillColor="rgba(59, 130, 246, 0.18)"
+                                    showPoints={false}
+                                    imageWidth={getEvalImageWidth(avaliacao)}
+                                    imageHeight={getEvalImageHeight(avaliacao)}
+                                  />
                                 </>
                               ) : (
                                 <Ionicons name="image-outline" size={28} color={colors.textSecondary} />

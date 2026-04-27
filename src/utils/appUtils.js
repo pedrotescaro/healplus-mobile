@@ -302,6 +302,8 @@ export const emptyAnamnesis = () => ({
   imageUri: '',
   imageBase64: '',
   imageMimeType: '',
+  imageWidth: 0,
+  imageHeight: 0,
   rois: [],
   roiPoints: [],
   roiMask: null,
@@ -407,12 +409,16 @@ export const normalizeEvaluationImageData = evaluation => {
   const roiMask = roiPoints.length >= 3 ? { type: 'polygon', points: roiPoints } : null;
   const imageBase64 = originalForm.imageBase64 || evaluation?.imageBase64 || '';
   const imageMimeType = originalForm.imageMimeType || evaluation?.imageMimeType || '';
+  const imageWidth = Number(originalForm.imageWidth || evaluation?.imageWidth || 0) || 0;
+  const imageHeight = Number(originalForm.imageHeight || evaluation?.imageHeight || 0) || 0;
 
   return {
     ...evaluation,
     imageUri: imagemOriginalUri,
     imageBase64,
     imageMimeType,
+    imageWidth,
+    imageHeight,
     imagemOriginalUri,
     woundImageUri: imagemOriginalUri,
     rois,
@@ -423,6 +429,8 @@ export const normalizeEvaluationImageData = evaluation => {
       imageUri: imagemOriginalUri,
       imageBase64,
       imageMimeType,
+      imageWidth,
+      imageHeight,
       woundImageUri: imagemOriginalUri,
       imagemOriginalUri,
       rois,

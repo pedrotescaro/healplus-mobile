@@ -51,6 +51,12 @@ const getEvaluationImageBase64 = evaluation =>
 const getEvaluationImageMimeType = evaluation =>
   evaluation?.imageMimeType || evaluation?.form?.imageMimeType || getReportImageMimeType(getEvaluationImageUri(evaluation));
 
+const getEvaluationImageWidth = evaluation =>
+  Number(evaluation?.imageWidth || evaluation?.form?.imageWidth || 0) || 0;
+
+const getEvaluationImageHeight = evaluation =>
+  Number(evaluation?.imageHeight || evaluation?.form?.imageHeight || 0) || 0;
+
 const getEvaluationRoiPoints = evaluation =>
   normalizeRoiPoints(evaluation?.roiPoints || evaluation?.form?.roiPoints);
 
@@ -109,6 +115,33 @@ const roiToSvgPoints = points =>
     .map(point => `${Math.round(point.x * 1000)},${Math.round(point.y * 1000)}`)
     .join(' ');
 
+const roiPointsToSmoothPath = points => {
+  const normalizedPoints = normalizeRoiPoints(points);
+  if (!normalizedPoints.length) return '';
+
+  const scaledPoints = normalizedPoints.map(point => ({
+    x: Math.round(point.x * 1000),
+    y: Math.round(point.y * 1000),
+  }));
+
+  if (scaledPoints.length === 1) return `M ${scaledPoints[0].x} ${scaledPoints[0].y}`;
+  if (scaledPoints.length === 2) {
+    return `M ${scaledPoints[0].x} ${scaledPoints[0].y} L ${scaledPoints[1].x} ${scaledPoints[1].y}`;
+  }
+
+  let path = `M ${scaledPoints[0].x} ${scaledPoints[0].y}`;
+  for (let index = 1; index < scaledPoints.length - 1; index += 1) {
+    const current = scaledPoints[index];
+    const next = scaledPoints[index + 1];
+    const midX = Math.round((current.x + next.x) / 2);
+    const midY = Math.round((current.y + next.y) / 2);
+    path += ` Q ${current.x} ${current.y} ${midX} ${midY}`;
+  }
+
+  const last = scaledPoints[scaledPoints.length - 1];
+  return `${path} L ${last.x} ${last.y}`;
+};
+
 const roisToHtmlSvg = rois => {
   const normalizedRois = normalizeRois(rois).filter(roi => roi.points.length >= 2);
   if (!normalizedRois.length) return '';
@@ -118,16 +151,21 @@ const roisToHtmlSvg = rois => {
       ${normalizedRois
         .map(roi => {
           const svgPoints = roiToSvgPoints(roi.points);
-          const strokeWidth = roi.mode === 'pen' ? 6 : 8;
+          const smoothPath = roiPointsToSmoothPath(roi.points);
+          const strokeWidth = roi.mode === 'pen' ? 5 : 8;
           const circleRadius = roi.mode === 'pen' ? 0 : 8;
 
           return `
             ${
-              roi.points.length >= 3
+              roi.points.length >= 3 && roi.mode !== 'pen'
                 ? `<polygon points="${svgPoints}" fill="rgba(59, 130, 246, 0.12)" stroke="${roi.color}" stroke-width="${strokeWidth}"></polygon>`
                 : ''
             }
-            <polyline points="${svgPoints}" fill="none" stroke="${roi.color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            ${
+              roi.mode === 'pen'
+                ? `<path d="${smoothPath}" fill="none" stroke="${roi.color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"></path>`
+                : `<polyline points="${svgPoints}" fill="none" stroke="${roi.color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"></polyline>`
+            }
             ${
               circleRadius
                 ? roi.points
@@ -158,7 +196,23 @@ const buildRoiListHtml = rois => {
   `;
 };
 
-const buildImageCardsHtml = async ({ title, imageUri, imageBase64, imageMimeType, rois, roiPoints }) => {
+const buildPhotoFrameHtml = (content, imageWidth, imageHeight) => {
+  const width = Number(imageWidth) || 0;
+  const height = Number(imageHeight) || 0;
+
+  if (!width || !height) {
+    return `<div class="photo-frame">${content}</div>`;
+  }
+
+  const paddingTop = ((height / width) * 100).toFixed(2);
+  return `
+    <div class="photo-frame photo-frame-natural" style="padding-top:${paddingTop}%">
+      <div class="photo-frame-content">${content}</div>
+    </div>
+  `;
+};
+
+const buildImageCardsHtml = async ({ title, imageUri, imageBase64, imageMimeType, imageWidth, imageHeight, rois, roiPoints }) => {
   const normalizedRois = normalizeRois(rois).length
     ? normalizeRois(rois)
     : normalizeRois([{ id: 'roi-legacy', label: 'ROI 1', mode: 'points', color: ROI_COLORS[0], points: roiPoints }]);
@@ -191,17 +245,15 @@ const buildImageCardsHtml = async ({ title, imageUri, imageBase64, imageMimeType
       <div class="photo-grid">
         <div class="photo-card">
           <div class="photo-label">Imagem original</div>
-          <div class="photo-frame">
-            <img src="${imageSrc}" alt="Imagem original da ferida" />
-          </div>
+          ${buildPhotoFrameHtml(`<img src="${imageSrc}" alt="Imagem original da ferida" />`, imageWidth, imageHeight)}
         </div>
         <div class="photo-card">
           <div class="photo-label">Imagem com ROI</div>
-          <div class="photo-frame">
+          ${buildPhotoFrameHtml(`
             <img src="${imageSrc}" alt="Imagem da ferida com ROI" />
             ${roiSvg}
             ${validRois.length ? '' : '<div class="photo-note">Sem ROI marcada</div>'}
-          </div>
+          `, imageWidth, imageHeight)}
         </div>
       </div>
       ${buildRoiListHtml(validRois)}
@@ -278,6 +330,8 @@ export function makeReport(paciente, selectedEval) {
     imageUri: getEvaluationImageUri(ultima),
     imageBase64: getEvaluationImageBase64(ultima),
     imageMimeType: getEvaluationImageMimeType(ultima),
+    imageWidth: getEvaluationImageWidth(ultima),
+    imageHeight: getEvaluationImageHeight(ultima),
     rois: getEvaluationRois(ultima),
     roiPoints: getEvaluationRoiPoints(ultima),
   };
@@ -295,6 +349,8 @@ export async function buildClinicalReportHtml({
         imageUri: reportInfo.imageUri || reportInfo.imagemOriginalUri,
         imageBase64: reportInfo.imageBase64,
         imageMimeType: reportInfo.imageMimeType,
+        imageWidth: reportInfo.imageWidth,
+        imageHeight: reportInfo.imageHeight,
         rois: reportInfo.rois,
         roiPoints: reportInfo.roiPoints,
       })
@@ -317,6 +373,9 @@ export async function buildClinicalReportHtml({
           .photo-label { font-weight: bold; font-size: 13px; color: #6B6B70; margin-bottom: 8px; }
           .photo-frame { height: 240px; border: 1px solid #E5E5EA; border-radius: 12px; overflow: hidden; position: relative; background: #F2F2F7; }
           .photo-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+          .photo-frame-natural { height: 0; }
+          .photo-frame-content { position: absolute; inset: 0; }
+          .photo-frame-content img { width: 100%; height: 100%; object-fit: contain; display: block; }
           .photo-card-wide { width: 100%; }
           .photo-empty { display: flex; align-items: center; justify-content: center; color: #6B6B70; font-weight: bold; }
           .photo-note { position: absolute; left: 10px; bottom: 10px; padding: 5px 8px; border-radius: 999px; background: rgba(28, 28, 30, 0.72); color: #FFF; font-size: 11px; font-weight: bold; }
@@ -390,6 +449,8 @@ export async function buildComparisonReportHtml({
     imageUri: getEvaluationImageUri(compareEvalA),
     imageBase64: getEvaluationImageBase64(compareEvalA),
     imageMimeType: getEvaluationImageMimeType(compareEvalA),
+    imageWidth: getEvaluationImageWidth(compareEvalA),
+    imageHeight: getEvaluationImageHeight(compareEvalA),
     rois: getEvaluationRois(compareEvalA),
     roiPoints: getEvaluationRoiPoints(compareEvalA),
   });
@@ -398,6 +459,8 @@ export async function buildComparisonReportHtml({
     imageUri: getEvaluationImageUri(compareEvalB),
     imageBase64: getEvaluationImageBase64(compareEvalB),
     imageMimeType: getEvaluationImageMimeType(compareEvalB),
+    imageWidth: getEvaluationImageWidth(compareEvalB),
+    imageHeight: getEvaluationImageHeight(compareEvalB),
     rois: getEvaluationRois(compareEvalB),
     roiPoints: getEvaluationRoiPoints(compareEvalB),
   });
@@ -422,6 +485,9 @@ export async function buildComparisonReportHtml({
           .photo-label { font-weight: bold; font-size: 13px; color: #6B6B70; margin-bottom: 8px; }
           .photo-frame { height: 220px; border: 1px solid #E5E5EA; border-radius: 12px; overflow: hidden; position: relative; background: #F2F2F7; }
           .photo-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+          .photo-frame-natural { height: 0; }
+          .photo-frame-content { position: absolute; inset: 0; }
+          .photo-frame-content img { width: 100%; height: 100%; object-fit: contain; display: block; }
           .photo-card-wide { width: 100%; }
           .photo-empty { display: flex; align-items: center; justify-content: center; color: #6B6B70; font-weight: bold; }
           .photo-note { position: absolute; left: 10px; bottom: 10px; padding: 5px 8px; border-radius: 999px; background: rgba(28, 28, 30, 0.72); color: #FFF; font-size: 11px; font-weight: bold; }

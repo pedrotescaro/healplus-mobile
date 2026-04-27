@@ -6,21 +6,26 @@ export const getBlockedImagePermissionMessage = permissionName =>
     ? `O acesso ${permissionName} está bloqueado para o Heal+. Abra Ajustes do iPhone > Heal+ e libere a permissão para continuar.`
     : `O acesso ${permissionName} está bloqueado para o Heal+. Abra as configurações do app e libere a permissão para continuar.`;
 
-export const buildCameraPickerOptions = aspect => ({
+export const buildCameraPickerOptions = (aspect, options = {}) => {
+  const allowsEditing = options.allowsEditing ?? true;
+  return {
   mediaTypes: ['images'],
-  allowsEditing: true,
-  aspect,
+  allowsEditing,
+  ...(allowsEditing && aspect ? { aspect } : {}),
   quality: 0.8,
   base64: true,
   ...(Platform.OS === 'ios'
     ? { presentationStyle: ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN }
     : {}),
-});
+  };
+};
 
-export const buildLibraryPickerOptions = aspect => ({
+export const buildLibraryPickerOptions = (aspect, options = {}) => {
+  const allowsEditing = options.allowsEditing ?? true;
+  return {
   mediaTypes: ['images'],
-  allowsEditing: true,
-  aspect,
+  allowsEditing,
+  ...(allowsEditing && aspect ? { aspect } : {}),
   quality: 0.8,
   base64: true,
   ...(Platform.OS === 'ios'
@@ -31,7 +36,8 @@ export const buildLibraryPickerOptions = aspect => ({
         shouldDownloadFromNetwork: true,
       }
     : {}),
-});
+  };
+};
 
 export async function executeImageFlow({
   requestPermission,

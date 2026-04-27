@@ -88,6 +88,8 @@ export default function EvaluationScreen({
   bottomNavProps,
 }) {
   const woundImageUri = form.imageUri || form.imagemOriginalUri || form.woundImageUri;
+  const woundImageWidth = Number(form.imageWidth || 0) || 0;
+  const woundImageHeight = Number(form.imageHeight || 0) || 0;
   const rois = normalizeRois(form.rois);
   const hasRoi = hasValidRois(rois) || normalizeRois([{ points: form.roiPoints }]).some(roi => roi.points.length >= 3);
   const roiCount = rois.filter(roi => roi.points.length >= 3).length || (hasRoi ? 1 : 0);
@@ -285,7 +287,14 @@ export default function EvaluationScreen({
               {woundImageUri ? (
                 <View style={styles.imagePreviewContainer}>
                   <Image source={{ uri: woundImageUri }} style={styles.imagePreview} resizeMode="contain" />
-                  <RoiImageOverlay rois={rois} points={form.roiPoints} color={colors.primary} fillColor="rgba(59, 130, 246, 0.2)" />
+                  <RoiImageOverlay
+                    rois={rois}
+                    points={form.roiPoints}
+                    color={colors.primary}
+                    fillColor="rgba(59, 130, 246, 0.2)"
+                    imageWidth={woundImageWidth}
+                    imageHeight={woundImageHeight}
+                  />
                   <View style={styles.imageOverlayBadge}>
                     <Ionicons name="checkmark-circle" size={18} color="#10B981" />
                     <Text style={{ color: '#10B981', fontSize: 12, fontWeight: '600', marginLeft: 5 }}>

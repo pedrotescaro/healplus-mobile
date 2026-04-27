@@ -44,6 +44,8 @@ export default function ReportsScreen({
     activeReportEval?.form?.woundImageUri ||
     '';
   const reportRois = normalizeRois(activeReportEval?.rois || activeReportEval?.form?.rois);
+  const reportImageWidth = Number(activeReportEval?.imageWidth || activeReportEval?.form?.imageWidth || 0) || 0;
+  const reportImageHeight = Number(activeReportEval?.imageHeight || activeReportEval?.form?.imageHeight || 0) || 0;
   const reportHasRoi = hasValidRois(reportRois) || normalizeRois([{ points: activeReportEval?.roiPoints || activeReportEval?.form?.roiPoints }]).some(roi => roi.points.length >= 3);
 
   return (
@@ -148,7 +150,14 @@ export default function ReportsScreen({
             <Text style={styles.reportImagePreviewTitle}>Imagem da avaliação</Text>
             <View style={styles.reportImagePreviewFrame}>
               <Image source={{ uri: reportImageUri }} style={styles.reportImagePreview} resizeMode="contain" />
-              <RoiImageOverlay rois={reportRois} points={activeReportEval?.roiPoints || activeReportEval?.form?.roiPoints} color={colors.primary} fillColor="rgba(59, 130, 246, 0.18)" />
+              <RoiImageOverlay
+                rois={reportRois}
+                points={activeReportEval?.roiPoints || activeReportEval?.form?.roiPoints}
+                color={colors.primary}
+                fillColor="rgba(59, 130, 246, 0.18)"
+                imageWidth={reportImageWidth}
+                imageHeight={reportImageHeight}
+              />
             </View>
             <Text style={styles.reportImageMeta}>
               {reportHasRoi ? 'ROI será exibida sobre a imagem no relatório.' : 'Sem ROI marcada nesta avaliação.'}

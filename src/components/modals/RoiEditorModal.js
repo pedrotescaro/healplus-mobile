@@ -2,7 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image, Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import RoiImageOverlay, { hasValidRois, normalizeRoiPoints, normalizeRois } from '../common/RoiImageOverlay';
+import RoiImageOverlay, {
+  getContainedImageFrame,
+  hasValidRois,
+  normalizeRoiPoints,
+  normalizeRois,
+} from '../common/RoiImageOverlay';
 
 const ROI_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6'];
 const POINT_MIN_DISTANCE = 0.035;
@@ -25,6 +30,8 @@ const getDistance = (a, b) => {
 export default function RoiEditorModal({
   visible,
   imageUri,
+  imageWidth,
+  imageHeight,
   initialRois,
   initialPoints,
   colors,
@@ -35,8 +42,18 @@ export default function RoiEditorModal({
   const [draftRois, setDraftRois] = useState([]);
   const [selectedRoiId, setSelectedRoiId] = useState(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [measuredImageSize, setMeasuredImageSize] = useState({
+    width: Number(imageWidth) || 0,
+    height: Number(imageHeight) || 0,
+  });
   const selectedRoi = draftRois.find(roi => roi.id === selectedRoiId) || draftRois[0] || null;
   const canConfirm = hasValidRois(draftRois);
+  const resolvedImageWidth = Number(imageWidth) || measuredImageSize.width;
+  const resolvedImageHeight = Number(imageHeight) || measuredImageSize.height;
+  const imageFrame = useMemo(
+    () => getContainedImageFrame(canvasSize.width, canvasSize.height, resolvedImageWidth, resolvedImageHeight),
+    [canvasSize.height, canvasSize.width, resolvedImageHeight, resolvedImageWidth]
+  );
 
   useEffect(() => {
     if (!visible) return;
@@ -53,6 +70,23 @@ export default function RoiEditorModal({
     setSelectedRoiId(nextRois[0]?.id || null);
   }, [initialPoints, initialRois, visible]);
 
+  useEffect(() => {
+    const propWidth = Number(imageWidth) || 0;
+    const propHeight = Number(imageHeight) || 0;
+    if (propWidth && propHeight) {
+      setMeasuredImageSize({ width: propWidth, height: propHeight });
+      return;
+    }
+
+    if (!visible || !imageUri) return;
+
+    Image.getSize(
+      imageUri,
+      (width, height) => setMeasuredImageSize({ width, height }),
+      () => setMeasuredImageSize({ width: 0, height: 0 })
+    );
+  }, [imageHeight, imageUri, imageWidth, visible]);
+
   const updateSelectedRoi = useCallback((updater) => {
     setDraftRois(currentRois =>
       currentRois.map(roi => (roi.id === selectedRoiId ? updater(roi) : roi))
@@ -61,12 +95,20 @@ export default function RoiEditorModal({
 
   const addPointFromEvent = useCallback(
     event => {
-      if (!canvasSize.width || !canvasSize.height || !selectedRoiId) return;
+      if (!canvasSize.width || !canvasSize.height || !imageFrame.width || !imageFrame.height || !selectedRoiId) return;
 
       const { locationX, locationY } = event.nativeEvent;
+      const insideImage =
+        locationX >= imageFrame.x &&
+        locationX <= imageFrame.x + imageFrame.width &&
+        locationY >= imageFrame.y &&
+        locationY <= imageFrame.y + imageFrame.height;
+
+      if (!insideImage) return;
+
       const nextPoint = {
-        x: Math.min(Math.max(locationX / canvasSize.width, 0), 1),
-        y: Math.min(Math.max(locationY / canvasSize.height, 0), 1),
+        x: Math.min(Math.max((locationX - imageFrame.x) / imageFrame.width, 0), 1),
+        y: Math.min(Math.max((locationY - imageFrame.y) / imageFrame.height, 0), 1),
       };
 
       updateSelectedRoi(roi => {
@@ -80,7 +122,7 @@ export default function RoiEditorModal({
         return { ...roi, points: [...roi.points, nextPoint] };
       });
     },
-    [canvasSize.height, canvasSize.width, selectedRoiId, updateSelectedRoi]
+    [canvasSize.height, canvasSize.width, imageFrame.height, imageFrame.width, imageFrame.x, imageFrame.y, selectedRoiId, updateSelectedRoi]
   );
 
   const addPointIfPen = useCallback(
@@ -97,6 +139,7 @@ export default function RoiEditorModal({
       onMoveShouldSetResponder: () => selectedRoi?.mode === 'pen',
       onResponderGrant: addPointFromEvent,
       onResponderMove: addPointIfPen,
+      onResponderTerminationRequest: () => false,
     }),
     [addPointFromEvent, addPointIfPen, selectedRoi?.mode]
   );
@@ -147,7 +190,11 @@ export default function RoiEditorModal({
           label: roi.label || `ROI ${index + 1}`,
           points: normalizeRoiPoints(roi.points),
         }))
-        .filter(roi => roi.points.length >= 3)
+        .filter(roi => roi.points.length >= 3),
+      {
+        imageWidth: resolvedImageWidth,
+        imageHeight: resolvedImageHeight,
+      }
     );
   };
 
@@ -183,7 +230,12 @@ export default function RoiEditorModal({
             {imageUri ? (
               <Image source={{ uri: imageUri }} style={styles.roiEditorImage} resizeMode="contain" />
             ) : null}
-            <RoiImageOverlay rois={draftRois} fillColor="rgba(59, 130, 246, 0.12)" />
+            <RoiImageOverlay
+              rois={draftRois}
+              fillColor="rgba(59, 130, 246, 0.12)"
+              imageWidth={resolvedImageWidth}
+              imageHeight={resolvedImageHeight}
+            />
           </View>
 
           <View style={styles.roiModeRow}>

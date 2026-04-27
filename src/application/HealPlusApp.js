@@ -811,6 +811,8 @@ function AppContent() {
   const setWoundImage = (uri, asset = {}) => {
     const imageBase64 = asset?.base64 || '';
     const imageMimeType = asset?.mimeType || (uri?.toLowerCase?.().includes('.png') ? 'image/png' : 'image/jpeg');
+    const imageWidth = Number(asset?.width || 0) || 0;
+    const imageHeight = Number(asset?.height || 0) || 0;
 
     setForm(prev => ({
       ...prev,
@@ -819,6 +821,8 @@ function AppContent() {
       imageUri: uri,
       imageBase64,
       imageMimeType,
+      imageWidth,
+      imageHeight,
       rois: [],
       roiPoints: [],
       roiMask: null,
@@ -833,6 +837,8 @@ function AppContent() {
       imageUri: '',
       imageBase64: '',
       imageMimeType: '',
+      imageWidth: 0,
+      imageHeight: 0,
       rois: [],
       roiPoints: [],
       roiMask: null,
@@ -848,11 +854,13 @@ function AppContent() {
     setShowRoiEditorModal(true);
   };
 
-  const salvarRoiFerida = rois => {
+  const salvarRoiFerida = (rois, imageMeta = {}) => {
     const normalizedRois = normalizeRois(rois);
     const firstRoiPoints = normalizedRois[0]?.points || [];
     setForm(prev => ({
       ...prev,
+      imageWidth: Number(prev.imageWidth || imageMeta.imageWidth || 0) || 0,
+      imageHeight: Number(prev.imageHeight || imageMeta.imageHeight || 0) || 0,
       rois: normalizedRois,
       roiPoints: firstRoiPoints,
       roiMask: firstRoiPoints.length >= 3 ? { type: 'polygon', points: firstRoiPoints } : null,
@@ -871,7 +879,7 @@ function AppContent() {
       requestPermission: () => ImagePicker.requestCameraPermissionsAsync(),
       permissionDeniedMessage: 'Precisamos de acesso à câmera para tirar fotos da ferida.',
       blockedPermissionName: 'à câmera',
-      launchPicker: () => ImagePicker.launchCameraAsync(imageServiceBuildCameraPickerOptions([4, 3])),
+      launchPicker: () => ImagePicker.launchCameraAsync(imageServiceBuildCameraPickerOptions([4, 3], { allowsEditing: false })),
       errorActionLabel: 'abrir a câmera',
       onPick: setWoundImage,
     });
@@ -881,7 +889,7 @@ function AppContent() {
       requestPermission: () => ImagePicker.requestMediaLibraryPermissionsAsync(),
       permissionDeniedMessage: 'Precisamos de acesso à galeria para selecionar fotos.',
       blockedPermissionName: 'às fotos',
-      launchPicker: () => ImagePicker.launchImageLibraryAsync(imageServiceBuildLibraryPickerOptions([4, 3])),
+      launchPicker: () => ImagePicker.launchImageLibraryAsync(imageServiceBuildLibraryPickerOptions([4, 3], { allowsEditing: false })),
       errorActionLabel: 'abrir a galeria',
       onPick: setWoundImage,
     });
@@ -1240,6 +1248,8 @@ function AppContent() {
     imageUri: formData.imageUri || formData.imagemOriginalUri || formData.woundImageUri || '',
     imageBase64: formData.imageBase64 || '',
     imageMimeType: formData.imageMimeType || '',
+    imageWidth: Number(formData.imageWidth || 0) || 0,
+    imageHeight: Number(formData.imageHeight || 0) || 0,
     imagemOriginalUri: formData.imageUri || formData.imagemOriginalUri || formData.woundImageUri || '',
     rois: normalizeRois(formData.rois),
     possuiRoi: normalizeRois(formData.rois).some(roi => roi.points.length >= 3),
@@ -1265,6 +1275,8 @@ function AppContent() {
     const imagemOriginalUri = form.imageUri || form.imagemOriginalUri || form.woundImageUri || '';
     const imageBase64 = form.imageBase64 || '';
     const imageMimeType = form.imageMimeType || '';
+    const imageWidth = Number(form.imageWidth || 0) || 0;
+    const imageHeight = Number(form.imageHeight || 0) || 0;
     const rois = normalizeRois(form.rois);
     const roiPoints = rois[0]?.points || normalizeRoiPoints(form.roiPoints);
     const roiMask = roiPoints.length >= 3 ? { type: 'polygon', points: roiPoints } : null;
@@ -1273,6 +1285,8 @@ function AppContent() {
       imageUri: imagemOriginalUri,
       imageBase64,
       imageMimeType,
+      imageWidth,
+      imageHeight,
       woundImageUri: imagemOriginalUri,
       imagemOriginalUri,
       rois,
@@ -1290,6 +1304,8 @@ function AppContent() {
       imageUri: imagemOriginalUri,
       imageBase64,
       imageMimeType,
+      imageWidth,
+      imageHeight,
       imagemOriginalUri,
       woundImageUri: imagemOriginalUri,
       rois,
@@ -1820,7 +1836,15 @@ function AppContent() {
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="contain"
               />
-              <RoiImageOverlay rois={aval.rois || aval.form?.rois} points={aval.roiPoints || aval.form?.roiPoints} color={colors.primary} fillColor="rgba(59, 130, 246, 0.18)" showPoints={false} />
+              <RoiImageOverlay
+                rois={aval.rois || aval.form?.rois}
+                points={aval.roiPoints || aval.form?.roiPoints}
+                color={colors.primary}
+                fillColor="rgba(59, 130, 246, 0.18)"
+                showPoints={false}
+                imageWidth={aval.imageWidth || aval.form?.imageWidth}
+                imageHeight={aval.imageHeight || aval.form?.imageHeight}
+              />
             </>
           ) : (
             <Ionicons name="image-outline" size={30} color={colors.textSecondary} />
@@ -2705,6 +2729,8 @@ function AppContent() {
     <RoiEditorModal
       visible={showRoiEditorModal}
       imageUri={form.imageUri || form.imagemOriginalUri || form.woundImageUri}
+      imageWidth={form.imageWidth}
+      imageHeight={form.imageHeight}
       initialRois={form.rois}
       initialPoints={form.roiPoints}
       styles={styles}
