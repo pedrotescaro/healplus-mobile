@@ -1,9 +1,10 @@
 import React from 'react';
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import BottomNav from '../components/common/BottomNav';
 import CustomCheckbox from '../components/common/CustomCheckbox';
+import RoiImageOverlay, { hasValidRois, normalizeRois } from '../components/common/RoiImageOverlay';
 
 export default function ReportsScreen({
   styles,
@@ -34,6 +35,17 @@ export default function ReportsScreen({
   onBackHome,
   bottomNavProps,
 }) {
+  const reportImageUri =
+    activeReportEval?.imageUri ||
+    activeReportEval?.imagemOriginalUri ||
+    activeReportEval?.woundImageUri ||
+    activeReportEval?.form?.imageUri ||
+    activeReportEval?.form?.imagemOriginalUri ||
+    activeReportEval?.form?.woundImageUri ||
+    '';
+  const reportRois = normalizeRois(activeReportEval?.rois || activeReportEval?.form?.rois);
+  const reportHasRoi = hasValidRois(reportRois) || normalizeRois([{ points: activeReportEval?.roiPoints || activeReportEval?.form?.roiPoints }]).some(roi => roi.points.length >= 3);
+
   return (
     <View style={styles.homeContainer}>
       <View style={styles.relatorioHeaderRow}>
@@ -130,6 +142,19 @@ export default function ReportsScreen({
             </View>
           ) : null}
         </View>
+
+        {reportImageUri ? (
+          <View style={styles.reportImagePreviewCard}>
+            <Text style={styles.reportImagePreviewTitle}>Imagem da avaliação</Text>
+            <View style={styles.reportImagePreviewFrame}>
+              <Image source={{ uri: reportImageUri }} style={styles.reportImagePreview} resizeMode="contain" />
+              <RoiImageOverlay rois={reportRois} points={activeReportEval?.roiPoints || activeReportEval?.form?.roiPoints} color={colors.primary} fillColor="rgba(59, 130, 246, 0.18)" />
+            </View>
+            <Text style={styles.reportImageMeta}>
+              {reportHasRoi ? 'ROI será exibida sobre a imagem no relatório.' : 'Sem ROI marcada nesta avaliação.'}
+            </Text>
+          </View>
+        ) : null}
 
         <Text style={[styles.formLabel, { marginTop: 20, marginBottom: 15 }]}>Incluir no Relatório</Text>
         <CustomCheckbox label="TIMERS" isChecked={incTimers} onPress={() => setIncTimers(!incTimers)} colors={colors} styles={styles} />

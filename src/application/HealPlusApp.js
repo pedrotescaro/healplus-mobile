@@ -46,6 +46,8 @@ import PatientFormModal from '../components/modals/PatientFormModal';
 import ProfilePhotoPickerModal from '../components/modals/ProfilePhotoPickerModal';
 import ReportEvaluationSelectionModal from '../components/modals/ReportEvaluationSelectionModal';
 import ReportPatientSelectionModal from '../components/modals/ReportPatientSelectionModal';
+import RoiEditorModal from '../components/modals/RoiEditorModal';
+import RoiImageOverlay, { normalizeRoiPoints, normalizeRois } from '../components/common/RoiImageOverlay';
 import appGetStyles from '../styles/getStyles';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -153,6 +155,7 @@ function AppContent() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showImagePickerModal, setShowImagePickerModal] = useState(false);
   const [showProfileImagePickerModal, setShowProfileImagePickerModal] = useState(false);
+  const [showRoiEditorModal, setShowRoiEditorModal] = useState(false);
   const [isImagePickerBusy, setIsImagePickerBusy] = useState(false);
   const [form, setForm] = useState(emptyAnamnesis());
   const [reportPatientId, setReportPatientId] = useState(null);
@@ -285,7 +288,7 @@ function AppContent() {
       duration: 280,
       useNativeDriver: USE_NATIVE_DRIVER,
     }).start();
-  }, [showOnboarding, onboardingStep, onboardingAnim]);
+  }, [showOnboarding, onboardingAnim]);
 
   useEffect(() => {
     if (activeBottomTabIndex < 0 || bottomNavWidth <= 0) return;
@@ -530,35 +533,35 @@ function AppContent() {
     () => [
       {
         id: 'welcome',
-        icon: 'heart-circle-outline',
-        title: 'Bem-vindo ao Heal+',
+        icon: 'medical-outline',
+        title: 'O que é o Heal+',
         description:
-          'Sua central clínica para acompanhar feridas com mais organização, clareza e segurança.',
-        points: ['Visão rápida dos casos ativos', 'Fluxo pensado para o dia a dia da assistência'],
+          'Um app para organizar o cuidado de feridas, reunir pacientes, avaliações, agenda e relatórios em um só lugar.',
+        points: ['Dados salvos no dispositivo', 'Fluxo pensado para o atendimento clínico'],
       },
       {
         id: 'patients',
         icon: 'people-outline',
-        title: 'Pacientes em ordem',
+        title: 'Comece pelo paciente',
         description:
-          'Cadastre e mantenha dados do paciente em um só lugar para reduzir retrabalho e ganhar agilidade.',
-        points: ['Dados pessoais centralizados', 'Histórico de avaliações sempre acessível'],
+          'Cadastre pacientes, encontre rapidamente quem está ativo e abra o histórico antes de registrar uma nova evolução.',
+        points: ['Lista de pacientes ativos e arquivados', 'Atalhos para avaliar, relatar e comparar'],
       },
       {
         id: 'evolution',
         icon: 'camera-outline',
-        title: 'Evolução com imagem e dados',
+        title: 'Registre a evolução',
         description:
-          'Registre dimensões, sinais clínicos e fotos para monitorar a evolução de forma objetiva.',
-        points: ['Escala de dor e sinais de infecção', 'Comparativos e relatórios em poucos toques'],
+          'Use a avaliação para preencher sinais clínicos, medidas, dor, tecidos e fotos da ferida de forma padronizada.',
+        points: ['Campos guiados por seções', 'Fotos e dados prontos para relatório'],
       },
       {
         id: 'start',
-        icon: 'flash-outline',
-        title: 'Pronto para começar',
+        icon: 'calendar-outline',
+        title: 'Acompanhe e compartilhe',
         description:
-          'Use o Heal+ para conduzir o cuidado com praticidade, consistência e mais confiança na tomada de decisão.',
-        points: ['Experiência fluida e profissional', 'Tudo salvo localmente no dispositivo'],
+          'Use a agenda para retornos, gere relatórios em PDF e consulte o assistente para navegar pelo banco local.',
+        points: ['Agenda, relatórios e comparativos', 'Assistente local para perguntas rápidas'],
       },
     ],
     []
@@ -590,6 +593,10 @@ function AppContent() {
 
   const irParaSlideOnboarding = useCallback(index => {
     setOnboardingStep(index);
+  }, []);
+
+  const voltarOnboarding = useCallback(() => {
+    setOnboardingStep(prev => Math.max(prev - 1, 0));
   }, []);
 
   const handleFocus = () => {
@@ -801,6 +808,58 @@ function AppContent() {
     });
   };
 
+  const setWoundImage = (uri, asset = {}) => {
+    const imageBase64 = asset?.base64 || '';
+    const imageMimeType = asset?.mimeType || (uri?.toLowerCase?.().includes('.png') ? 'image/png' : 'image/jpeg');
+
+    setForm(prev => ({
+      ...prev,
+      woundImageUri: uri,
+      imagemOriginalUri: uri,
+      imageUri: uri,
+      imageBase64,
+      imageMimeType,
+      rois: [],
+      roiPoints: [],
+      roiMask: null,
+    }));
+  };
+
+  const removerImagemFerida = () => {
+    setForm(prev => ({
+      ...prev,
+      woundImageUri: '',
+      imagemOriginalUri: '',
+      imageUri: '',
+      imageBase64: '',
+      imageMimeType: '',
+      rois: [],
+      roiPoints: [],
+      roiMask: null,
+    }));
+  };
+
+  const abrirEditorRoi = () => {
+    const woundImageUri = form.imageUri || form.imagemOriginalUri || form.woundImageUri;
+    if (!woundImageUri) {
+      Alert.alert('Imagem necessária', 'Adicione uma foto da ferida antes de delimitar a ROI.');
+      return;
+    }
+    setShowRoiEditorModal(true);
+  };
+
+  const salvarRoiFerida = rois => {
+    const normalizedRois = normalizeRois(rois);
+    const firstRoiPoints = normalizedRois[0]?.points || [];
+    setForm(prev => ({
+      ...prev,
+      rois: normalizedRois,
+      roiPoints: firstRoiPoints,
+      roiMask: firstRoiPoints.length >= 3 ? { type: 'polygon', points: firstRoiPoints } : null,
+    }));
+    setShowRoiEditorModal(false);
+  };
+
   // --- FUNÇÕES DO IMAGE PICKER (FERIDA) ---
   const abrirImagePicker = () => {
     if (imagePickerInFlightRef.current) return;
@@ -814,7 +873,7 @@ function AppContent() {
       blockedPermissionName: 'à câmera',
       launchPicker: () => ImagePicker.launchCameraAsync(imageServiceBuildCameraPickerOptions([4, 3])),
       errorActionLabel: 'abrir a câmera',
-      onPick: uri => updateField('woundImageUri', uri),
+      onPick: setWoundImage,
     });
 
   const escolherFotoGaleria = async () =>
@@ -824,7 +883,7 @@ function AppContent() {
       blockedPermissionName: 'às fotos',
       launchPicker: () => ImagePicker.launchImageLibraryAsync(imageServiceBuildLibraryPickerOptions([4, 3])),
       errorActionLabel: 'abrir a galeria',
-      onPick: uri => updateField('woundImageUri', uri),
+      onPick: setWoundImage,
     });
 
   const updateAgendaField = (key, value) => setAgendaForm(prev => ({ ...prev, [key]: value }));
@@ -1137,6 +1196,55 @@ function AppContent() {
     setTela('Avaliacao');
   };
 
+  const parseClinicalNumber = value => {
+    const normalizedValue = String(value || '').replace(',', '.');
+    const parsed = parseFloat(normalizedValue);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const buildEvaluationResults = formData => {
+    const larguraCm = parseClinicalNumber(formData.ferida_largura);
+    const comprimentoCm = parseClinicalNumber(formData.ferida_comprimento);
+    const areaFeridaCm2 = larguraCm * comprimentoCm;
+    const percentualGranulacao = parseClinicalNumber(formData.percentual_granulacao_leito);
+    const percentualEpitelizacao = parseClinicalNumber(formData.percentual_epitelizacao_leito);
+    const percentualEsfacelo = parseClinicalNumber(formData.percentual_esfacelo_leito);
+    const percentualNecrose = parseClinicalNumber(formData.percentual_necrose_seca_leito);
+
+    return {
+      larguraCm,
+      comprimentoCm,
+      areaFeridaCm2,
+      percentualGranulacao,
+      percentualEpitelizacao,
+      percentualEsfacelo,
+      percentualNecrose,
+      somaTecidosPercentual:
+        percentualGranulacao + percentualEpitelizacao + percentualEsfacelo + percentualNecrose,
+      dorEscala: parseClinicalNumber(formData.dor_escala),
+    };
+  };
+
+  const buildEvaluationReportData = formData => ({
+    localizacao: formData.localizacao_ferida || '',
+    etiologia:
+      formData.etiologia_ferida === 'Outra'
+        ? formData.etiologia_outra || 'Outra'
+        : formData.etiologia_ferida || '',
+    dataConsulta: formData.data_consulta || '',
+    profissional: formData.profissional_responsavel || '',
+    exsudato: [formData.quantidade_exsudato, formData.tipo_exsudato, formData.consistencia_exsudato]
+      .filter(Boolean)
+      .join(' • '),
+    observacoes: formData.observacoes || '',
+    imageUri: formData.imageUri || formData.imagemOriginalUri || formData.woundImageUri || '',
+    imageBase64: formData.imageBase64 || '',
+    imageMimeType: formData.imageMimeType || '',
+    imagemOriginalUri: formData.imageUri || formData.imagemOriginalUri || formData.woundImageUri || '',
+    rois: normalizeRois(formData.rois),
+    possuiRoi: normalizeRois(formData.rois).some(roi => roi.points.length >= 3),
+  });
+
   const saveAvaliacao = () => {
     if (!form.nome_cliente || !form.localizacao_ferida) {
       Alert.alert('Campos obrigatórios', 'Preencha nome do paciente e localização da ferida.');
@@ -1154,12 +1262,42 @@ function AppContent() {
     }
 
     const nowIso = new Date().toISOString();
+    const imagemOriginalUri = form.imageUri || form.imagemOriginalUri || form.woundImageUri || '';
+    const imageBase64 = form.imageBase64 || '';
+    const imageMimeType = form.imageMimeType || '';
+    const rois = normalizeRois(form.rois);
+    const roiPoints = rois[0]?.points || normalizeRoiPoints(form.roiPoints);
+    const roiMask = roiPoints.length >= 3 ? { type: 'polygon', points: roiPoints } : null;
+    const formPayload = {
+      ...form,
+      imageUri: imagemOriginalUri,
+      imageBase64,
+      imageMimeType,
+      woundImageUri: imagemOriginalUri,
+      imagemOriginalUri,
+      rois,
+      roiPoints,
+      roiMask,
+    };
+    const resultados = buildEvaluationResults(formPayload);
+    const dadosRelatorio = buildEvaluationReportData(formPayload);
     const registroBase = {
       id: editingEvaluationId || createId(),
-      regiao: form.localizacao_ferida,
-      data: form.data_consulta || '31/03/2026',
-      tipo: form.etiologia_ferida === 'Outra' ? form.etiologia_outra || 'Outra' : form.etiologia_ferida,
-      form: { ...form },
+      patientId: form.patientId || '',
+      regiao: formPayload.localizacao_ferida,
+      data: formPayload.data_consulta || '31/03/2026',
+      tipo: formPayload.etiologia_ferida === 'Outra' ? formPayload.etiologia_outra || 'Outra' : formPayload.etiologia_ferida,
+      imageUri: imagemOriginalUri,
+      imageBase64,
+      imageMimeType,
+      imagemOriginalUri,
+      woundImageUri: imagemOriginalUri,
+      rois,
+      roiPoints,
+      roiMask,
+      resultados,
+      dadosRelatorio,
+      form: formPayload,
       createdAt: nowIso,
     };
 
@@ -1311,9 +1449,10 @@ function AppContent() {
     }
 
     try {
-      const html = reportBuildClinicalReportHtml({
+      const html = await reportBuildClinicalReportHtml({
         reportInfo,
         includeTimers: incTimers,
+        includePhotos: incFotos,
         includeNotes: incNotas,
       });
 
@@ -1343,7 +1482,7 @@ function AppContent() {
     }
 
     try {
-      const html = reportBuildComparisonReportHtml({
+      const html = await reportBuildComparisonReportHtml({
         comparePatient,
         compareEvalA,
         compareEvalB,
@@ -1356,6 +1495,19 @@ function AppContent() {
         'Não foi possível gerar o PDF comparativo: ' + error.message
       );
     }
+  };
+
+  const abrirDetalhesAvaliacaoComparativo = avaliacao => {
+    if (!comparePatient || !avaliacao) return;
+    abrirEditarAvaliacaoPaciente(comparePatient, avaliacao);
+  };
+
+  const selecionarAvaliacaoParaComparar = avaliacao => {
+    if (!avaliacao || !comparePatient) return;
+    const outraAvaliacao =
+      (comparePatient.avaliacoes || []).find(item => item.id !== avaliacao.id) || null;
+    setCompareEvalAId(avaliacao.id);
+    setCompareEvalBId(outraAvaliacao?.id || null);
   };
 
   const reportPatientEvals = reportPatient?.avaliacoes || [];
@@ -1643,12 +1795,37 @@ function AppContent() {
     );
   };
 
+  const abrirComparativoDaAvaliacao = (paciente, avaliacao) => {
+    const avaliacoes = paciente?.avaliacoes || [];
+    const outraAvaliacao = avaliacoes.find(item => item.id !== avaliacao.id) || null;
+
+    setComparePatientId(paciente.id);
+    setCompareSearchQuery(paciente.nome);
+    setCompareEvalAId(avaliacao.id);
+    setCompareEvalBId(outraAvaliacao?.id || null);
+    setTela('CompararRelatorios');
+  };
+
   const renderPatientEvaluationItem = (paciente, aval, index) => (
     <View
       key={aval.id}
       style={[styles.patientRecordItem, index !== paciente.avaliacoes.length - 1 && styles.patientRecordBorder]}
     >
       <View style={styles.patientRecordHeaderRow}>
+        <View style={styles.patientEvalThumb}>
+          {aval.imageUri || aval.imagemOriginalUri || aval.woundImageUri || aval.form?.imageUri || aval.form?.woundImageUri ? (
+            <>
+              <Image
+                source={{ uri: aval.imageUri || aval.imagemOriginalUri || aval.woundImageUri || aval.form?.imageUri || aval.form?.woundImageUri }}
+                style={{ width: '100%', height: '100%' }}
+                resizeMode="contain"
+              />
+              <RoiImageOverlay rois={aval.rois || aval.form?.rois} points={aval.roiPoints || aval.form?.roiPoints} color={colors.primary} fillColor="rgba(59, 130, 246, 0.18)" showPoints={false} />
+            </>
+          ) : (
+            <Ionicons name="image-outline" size={30} color={colors.textSecondary} />
+          )}
+        </View>
         <View style={styles.patientRecordInfoCol}>
           <View style={styles.patientDetailRow}>
             <Ionicons name="eye-outline" size={18} color={colors.textSecondary} />
@@ -1658,11 +1835,25 @@ function AppContent() {
             <Ionicons name="calendar-outline" size={18} color={colors.textSecondary} />
             <Text style={styles.patientDetailText}>{aval.data}</Text>
           </View>
+          <View style={styles.patientDetailRow}>
+            <Ionicons name="analytics-outline" size={18} color={colors.textSecondary} />
+            <Text style={styles.patientDetailText}>
+              Área {parseClinicalNumber(aval.resultados?.areaFeridaCm2 || calculateCompareEvalArea(aval)).toFixed(1)} cm²
+            </Text>
+          </View>
         </View>
-        <TouchableOpacity style={styles.patientEvalEditBtn} onPress={() => abrirEditarAvaliacaoPaciente(paciente, aval)}>
-          <Ionicons name="create-outline" size={16} color={colors.primary} />
-          <Text style={styles.patientEvalEditText}>Editar</Text>
-        </TouchableOpacity>
+        <View style={{ gap: 8 }}>
+          <TouchableOpacity style={styles.patientEvalEditBtn} onPress={() => abrirEditarAvaliacaoPaciente(paciente, aval)}>
+            <Ionicons name="create-outline" size={16} color={colors.primary} />
+            <Text style={styles.patientEvalEditText}>Editar</Text>
+          </TouchableOpacity>
+          {(paciente.avaliacoes || []).length >= 2 ? (
+            <TouchableOpacity style={styles.patientEvalEditBtn} onPress={() => abrirComparativoDaAvaliacao(paciente, aval)}>
+              <Ionicons name="git-compare-outline" size={16} color={colors.primary} />
+              <Text style={styles.patientEvalEditText}>Comparar</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
       </View>
     </View>
   );
@@ -2072,7 +2263,96 @@ function AppContent() {
     androidBottomInset,
   };
 
+  const renderOnboarding = () => {
+    if (!showOnboarding || !onboardingCurrentSlide) return null;
+
+    return (
+      <Animated.View style={[styles.onboardingOverlay, { opacity: onboardingAnim }]}>
+        <View style={[styles.onboardingContainer, onboardingAndroidContainerStyle]}>
+          <View style={styles.onboardingHeaderRow}>
+            <View style={styles.onboardingBrandRow}>
+              <Image style={styles.onboardingBrandLogo} source={LOGO_IMAGE} resizeMode="contain" />
+              <Text style={styles.onboardingBrandText}>
+                Heal<Text style={styles.textBlue}>+</Text>
+              </Text>
+            </View>
+
+            <TouchableOpacity style={styles.onboardingSkipBtn} onPress={pularOnboarding}>
+              <Text style={styles.onboardingSkipText}>Pular</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.onboardingCard}>
+            <View style={styles.onboardingStepPill}>
+              <Text style={styles.onboardingStepPillText}>
+                Etapa {onboardingStep + 1} de {onboardingSlides.length}
+              </Text>
+            </View>
+
+            <View style={[styles.onboardingIconCircle, { backgroundColor: colors.primaryLight }]}>
+              <Ionicons name={onboardingCurrentSlide.icon} size={54} color={colors.primary} />
+            </View>
+
+            <Text style={styles.onboardingTitle}>{onboardingCurrentSlide.title}</Text>
+            <Text style={styles.onboardingDescription}>{onboardingCurrentSlide.description}</Text>
+
+            <View style={styles.onboardingBulletList}>
+              {onboardingCurrentSlide.points.map(point => (
+                <View key={point} style={styles.onboardingBulletRow}>
+                  <Ionicons name="checkmark-circle" size={18} color={colors.primary} />
+                  <Text style={styles.onboardingBulletText}>{point}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.onboardingFooter}>
+            <View style={styles.onboardingDotsRow}>
+              {onboardingSlides.map((slide, index) => {
+                const isActive = index === onboardingStep;
+                return (
+                  <TouchableOpacity
+                    key={slide.id}
+                    activeOpacity={0.8}
+                    onPress={() => irParaSlideOnboarding(index)}
+                    style={[
+                      styles.onboardingDot,
+                      isActive && styles.onboardingDotActive,
+                      isActive && { backgroundColor: colors.primary, borderColor: colors.primary },
+                    ]}
+                  />
+                );
+              })}
+            </View>
+
+            <View style={styles.onboardingButtonsRow}>
+              <TouchableOpacity
+                style={styles.onboardingGhostButton}
+                onPress={onboardingStep === 0 ? pularOnboarding : voltarOnboarding}
+              >
+                <Text style={styles.onboardingGhostButtonText}>
+                  {onboardingStep === 0 ? 'Pular' : 'Voltar'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.onboardingPrimaryButton, onboardingStep === 0 && styles.onboardingPrimaryButtonFull]}
+                onPress={avancarOnboarding}
+              >
+                <Text style={styles.onboardingPrimaryButtonText}>
+                  {isLastOnboardingStep ? 'Começar' : 'Próximo'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Animated.View>
+    );
+  };
+
   const renderCurrentScreen = () => {
+    if (showOnboarding) return renderOnboarding();
+
     switch (tela) {
       case 'Home':
         return (
@@ -2150,6 +2430,8 @@ function AppContent() {
             compareAreaReductionText={compareAreaReductionText}
             compareMaxChartArea={compareMaxChartArea}
             handleExportarComparativo={handleExportarComparativo}
+            onOpenEvalDetails={abrirDetalhesAvaliacaoComparativo}
+            onCompareEvalFromSequence={selecionarAvaliacaoParaComparar}
             openDropdown={openDropdown}
             setOpenDropdown={setOpenDropdown}
             androidBottomInset={androidBottomInset}
@@ -2221,6 +2503,8 @@ function AppContent() {
             onOpenImagePicker={abrirImagePicker}
             onTakeWoundPhoto={tirarFotoFerida}
             onChooseWoundPhoto={escolherFotoGaleria}
+            onOpenRoiEditor={abrirEditorRoi}
+            onRemoveWoundImage={removerImagemFerida}
             getPainColor={getPainColor}
             openDropdown={openDropdown}
             setOpenDropdown={setOpenDropdown}
@@ -2417,6 +2701,16 @@ function AppContent() {
       onTakePhoto={tirarFotoPerfil}
       onChooseFromLibrary={escolherFotoPerfilGaleria}
       onRemovePhoto={removerFotoPerfil}
+    />
+    <RoiEditorModal
+      visible={showRoiEditorModal}
+      imageUri={form.imageUri || form.imagemOriginalUri || form.woundImageUri}
+      initialRois={form.rois}
+      initialPoints={form.roiPoints}
+      styles={styles}
+      colors={colors}
+      onCancel={() => setShowRoiEditorModal(false)}
+      onConfirm={salvarRoiFerida}
     />
     <LoginErrorModal
       visible={modalErroVisible}

@@ -15,6 +15,7 @@ import BottomNav from '../components/common/BottomNav';
 import CheckItem from '../components/common/CheckItem';
 import DropdownField from '../components/common/DropdownField';
 import HeaderDashboard from '../components/common/HeaderDashboard';
+import RoiImageOverlay, { hasValidRois, normalizeRois } from '../components/common/RoiImageOverlay';
 import {
   COMORBIDADES_CONFIG,
   FORM_OPTIONS,
@@ -75,6 +76,8 @@ export default function EvaluationScreen({
   onOpenImagePicker,
   onTakeWoundPhoto,
   onChooseWoundPhoto,
+  onOpenRoiEditor,
+  onRemoveWoundImage,
   getPainColor,
   openDropdown,
   setOpenDropdown,
@@ -84,6 +87,11 @@ export default function EvaluationScreen({
   headerProps,
   bottomNavProps,
 }) {
+  const woundImageUri = form.imageUri || form.imagemOriginalUri || form.woundImageUri;
+  const rois = normalizeRois(form.rois);
+  const hasRoi = hasValidRois(rois) || normalizeRois([{ points: form.roiPoints }]).some(roi => roi.points.length >= 3);
+  const roiCount = rois.filter(roi => roi.points.length >= 3).length || (hasRoi ? 1 : 0);
+
   return (
     <View style={styles.homeContainer}>
       <HeaderDashboard {...headerProps} />
@@ -274,15 +282,24 @@ export default function EvaluationScreen({
               activeOpacity={0.7}
               disabled={isImagePickerBusy}
             >
-              {form.woundImageUri ? (
+              {woundImageUri ? (
                 <View style={styles.imagePreviewContainer}>
-                  <Image source={{ uri: form.woundImageUri }} style={styles.imagePreview} resizeMode="cover" />
+                  <Image source={{ uri: woundImageUri }} style={styles.imagePreview} resizeMode="contain" />
+                  <RoiImageOverlay rois={rois} points={form.roiPoints} color={colors.primary} fillColor="rgba(59, 130, 246, 0.2)" />
                   <View style={styles.imageOverlayBadge}>
                     <Ionicons name="checkmark-circle" size={18} color="#10B981" />
                     <Text style={{ color: '#10B981', fontSize: 12, fontWeight: '600', marginLeft: 5 }}>
                       Foto adicionada
                     </Text>
                   </View>
+                  {hasRoi ? (
+                    <View style={styles.imageRoiBadge}>
+                      <Ionicons name="scan-circle" size={18} color="#10B981" />
+                      <Text style={{ color: '#10B981', fontSize: 12, fontWeight: '700', marginLeft: 5 }}>
+                        {roiCount > 1 ? `${roiCount} ROIs salvas` : 'ROI salva'}
+                      </Text>
+                    </View>
+                  ) : null}
                   <TouchableOpacity style={styles.imageChangeBtn} onPress={onOpenImagePicker} disabled={isImagePickerBusy}>
                     <Ionicons name="camera-reverse" size={18} color="#FFF" />
                     <Text style={{ color: '#FFF', fontSize: 12, fontWeight: '600', marginLeft: 6 }}>
@@ -291,7 +308,7 @@ export default function EvaluationScreen({
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.imageRemoveBtn}
-                    onPress={() => !isImagePickerBusy && updateField('woundImageUri', '')}
+                    onPress={() => !isImagePickerBusy && onRemoveWoundImage()}
                     disabled={isImagePickerBusy}
                   >
                     <Ionicons name="trash" size={16} color="#EF4444" />
@@ -311,6 +328,23 @@ export default function EvaluationScreen({
                 </View>
               )}
             </TouchableOpacity>
+
+            {woundImageUri ? (
+              <View style={styles.roiToolsRow}>
+                <TouchableOpacity style={styles.roiToolButton} onPress={onOpenRoiEditor}>
+                  <Ionicons name="scan-outline" size={18} color={colors.primary} />
+                  <Text style={styles.roiToolButtonText}>{hasRoi ? 'Editar ROIs' : 'Delimitar ROI'}</Text>
+                </TouchableOpacity>
+                <View style={styles.roiStatusPill}>
+                  <Ionicons
+                    name={hasRoi ? 'checkmark-circle' : 'ellipse-outline'}
+                    size={16}
+                    color={hasRoi ? '#10B981' : colors.textSecondary}
+                  />
+                  <Text style={styles.roiStatusText}>{hasRoi ? `${roiCount} ROI(s)` : 'Opcional'}</Text>
+                </View>
+              </View>
+            ) : null}
 
             <View style={{ height: 1, backgroundColor: colors.borderLight, marginVertical: 15 }} />
             <Text style={styles.formLabel}>Dimensões e Características Gerais</Text>

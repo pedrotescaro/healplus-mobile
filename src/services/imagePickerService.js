@@ -11,6 +11,7 @@ export const buildCameraPickerOptions = aspect => ({
   allowsEditing: true,
   aspect,
   quality: 0.8,
+  base64: true,
   ...(Platform.OS === 'ios'
     ? { presentationStyle: ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN }
     : {}),
@@ -21,6 +22,7 @@ export const buildLibraryPickerOptions = aspect => ({
   allowsEditing: true,
   aspect,
   quality: 0.8,
+  base64: true,
   ...(Platform.OS === 'ios'
     ? {
         presentationStyle: ImagePicker.UIImagePickerPresentationStyle.FULL_SCREEN,
@@ -60,7 +62,8 @@ export async function executeImageFlow({
     const result = await launchPicker();
     if (result?.canceled) return;
 
-    const nextUri = result?.assets?.[0]?.uri;
+    const pickedAsset = result?.assets?.[0];
+    const nextUri = pickedAsset?.uri;
     if (!nextUri) {
       Alert.alert(
         'Imagem indisponível',
@@ -69,7 +72,7 @@ export async function executeImageFlow({
       return;
     }
 
-    onPick(nextUri);
+    onPick(nextUri, pickedAsset);
   } catch (error) {
     console.warn(`[image-picker] Falha ao ${errorActionLabel}`, error);
     Alert.alert(

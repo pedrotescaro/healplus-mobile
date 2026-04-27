@@ -4,9 +4,38 @@ import { Ionicons } from '@expo/vector-icons';
 
 import BottomNav from '../components/common/BottomNav';
 import HeaderDashboard from '../components/common/HeaderDashboard';
+import { AGENDA_ONBOARDING_STORAGE_KEY } from '../constants/appConstants';
+import { getStoredValue, setStoredValue } from '../storage/appStorage';
 
-const POPUP_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-const POPUP_AUTO_DISMISS_MS = 6000;       // auto-close after 6s
+const AGENDA_GUIDE_SLIDES = [
+  {
+    id: 'month',
+    icon: 'calendar-outline',
+    eyebrow: 'Visão do mês',
+    title: 'Encontre o dia certo',
+    description:
+      'Use as setas para trocar de mês e toque em um dia para ver todos os atendimentos marcados.',
+    points: ['O contador mostra quantos retornos existem no mês', 'O dia selecionado filtra a lista abaixo'],
+  },
+  {
+    id: 'new',
+    icon: 'add-circle-outline',
+    eyebrow: 'Novo atendimento',
+    title: 'Cadastre pelo botão +',
+    description:
+      'O botão azul abre o formulário para escolher paciente, data, horário, tipo e status do atendimento.',
+    points: ['Você pode digitar um paciente ou selecionar um cadastrado', 'Observações ajudam a lembrar detalhes do retorno'],
+  },
+  {
+    id: 'manage',
+    icon: 'create-outline',
+    eyebrow: 'Rotina do dia',
+    title: 'Acompanhe e edite',
+    description:
+      'Cada card mostra horário, paciente, tipo e status. Use editar ou excluir quando a agenda mudar.',
+    points: ['Status deixam o dia mais fácil de escanear', 'Tudo fica salvo na agenda local do app'],
+  },
+];
 
 export default function AgendaScreen({
   styles,
@@ -28,51 +57,60 @@ export default function AgendaScreen({
   headerProps,
   bottomNavProps,
 }) {
-  const [tipVisible, setTipVisible] = useState(true);
-  const tipOpacity = useRef(new Animated.Value(0)).current;
-  const intervalRef = useRef(null);
-  const autoDismissRef = useRef(null);
-
-  const showTip = () => {
-    setTipVisible(true);
-    Animated.timing(tipOpacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-
-    autoDismissRef.current = setTimeout(() => {
-      dismissTip();
-    }, POPUP_AUTO_DISMISS_MS);
-  };
-
-  const dismissTip = () => {
-    if (autoDismissRef.current) {
-      clearTimeout(autoDismissRef.current);
-      autoDismissRef.current = null;
-    }
-    Animated.timing(tipOpacity, {
-      toValue: 0,
-      duration: 250,
-      useNativeDriver: true,
-    }).start(() => setTipVisible(false));
-  };
+  const [agendaGuideVisible, setAgendaGuideVisible] = useState(false);
+  const [agendaGuideStep, setAgendaGuideStep] = useState(0);
+  const agendaGuideOpacity = useRef(new Animated.Value(0)).current;
+  const currentAgendaGuideSlide = AGENDA_GUIDE_SLIDES[agendaGuideStep];
+  const isLastAgendaGuideStep = agendaGuideStep === AGENDA_GUIDE_SLIDES.length - 1;
 
   useEffect(() => {
-    // Show immediately on mount
-    showTip();
+    let isMounted = true;
 
-    // Then repeat every 5 minutes
-    intervalRef.current = setInterval(() => {
-      showTip();
-    }, POPUP_INTERVAL_MS);
+    const loadAgendaGuide = async () => {
+      const hasSeenAgendaGuide = await getStoredValue(AGENDA_ONBOARDING_STORAGE_KEY);
+      if (!isMounted || hasSeenAgendaGuide === '1') return;
+
+      setAgendaGuideVisible(true);
+      agendaGuideOpacity.setValue(0);
+      Animated.timing(agendaGuideOpacity, {
+        toValue: 1,
+        duration: 260,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    loadAgendaGuide();
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
+      isMounted = false;
+      agendaGuideOpacity.stopAnimation();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [agendaGuideOpacity]);
+
+  const closeAgendaGuide = async () => {
+    await setStoredValue(AGENDA_ONBOARDING_STORAGE_KEY, '1');
+    Animated.timing(agendaGuideOpacity, {
+      toValue: 0,
+      duration: 220,
+      useNativeDriver: true,
+    }).start(() => {
+      setAgendaGuideVisible(false);
+      setAgendaGuideStep(0);
+    });
+  };
+
+  const nextAgendaGuideStep = () => {
+    if (isLastAgendaGuideStep) {
+      closeAgendaGuide();
+      return;
+    }
+
+    setAgendaGuideStep(prev => Math.min(prev + 1, AGENDA_GUIDE_SLIDES.length - 1));
+  };
+
+  const previousAgendaGuideStep = () => {
+    setAgendaGuideStep(prev => Math.max(prev - 1, 0));
+  };
 
   return (
     <View style={styles.homeContainer}>
@@ -176,104 +214,64 @@ export default function AgendaScreen({
         <Ionicons name="add" size={28} color="#FFF" />
       </TouchableOpacity>
 
-      {/* Popup tip — appears on mount then every 5 minutes */}
-      {tipVisible && (
-        <Animated.View
-          pointerEvents="box-none"
-          style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0, bottom: 0,
-            justifyContent: 'center',
-            alignItems: 'center',
-            opacity: tipOpacity,
-            zIndex: 999,
-          }}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={dismissTip}
-            style={{
-              position: 'absolute',
-              top: 0, left: 0, right: 0, bottom: 0,
-              backgroundColor: 'rgba(0,0,0,0.35)',
-            }}
-          />
-          <View
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: 20,
-              padding: 22,
-              marginHorizontal: 28,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: 0.18,
-              shadowRadius: 24,
-              elevation: 12,
-              borderWidth: 1,
-              borderColor: colors.borderLight,
-              alignItems: 'center',
-            }}
-          >
-            <View
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 24,
-                backgroundColor: colors.primary + '18',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 14,
-              }}
-            >
-              <Ionicons name="calendar-outline" size={24} color={colors.primary} />
+      {agendaGuideVisible && currentAgendaGuideSlide && (
+        <Animated.View style={[styles.agendaGuideOverlay, { opacity: agendaGuideOpacity }]}>
+          <View style={styles.agendaGuideCard}>
+            <TouchableOpacity style={styles.agendaGuideCloseButton} onPress={closeAgendaGuide}>
+              <Ionicons name="close" size={20} color={colors.textSecondary} />
+            </TouchableOpacity>
+
+            <View style={[styles.agendaGuideIconCircle, { backgroundColor: colors.primaryLight }]}>
+              <Ionicons name={currentAgendaGuideSlide.icon} size={34} color={colors.primary} />
             </View>
 
-            <Text
-              style={{
-                color: colors.textSecondary,
-                fontSize: 11,
-                fontWeight: '700',
-                textTransform: 'uppercase',
-                letterSpacing: 0.5,
-                marginBottom: 6,
-              }}
-            >
-              Visão do mês
-            </Text>
-            <Text
-              style={{
-                color: colors.text,
-                fontSize: 22,
-                fontWeight: '800',
-                marginBottom: 8,
-              }}
-            >
-              {totalConsultasMes} atendimentos
-            </Text>
-            <Text
-              style={{
-                color: colors.textSecondary,
-                fontSize: 13,
-                lineHeight: 20,
-                textAlign: 'center',
-                marginBottom: 18,
-              }}
-            >
-              Use as setas para navegar entre os meses e toque em{' '}
-              <Text style={{ fontWeight: '700', color: colors.primary }}>+</Text> para adicionar um novo horário.
-            </Text>
+            <Text style={styles.agendaGuideEyebrow}>{currentAgendaGuideSlide.eyebrow}</Text>
+            <Text style={styles.agendaGuideTitle}>{currentAgendaGuideSlide.title}</Text>
+            <Text style={styles.agendaGuideText}>{currentAgendaGuideSlide.description}</Text>
 
-            <TouchableOpacity
-              onPress={dismissTip}
-              style={{
-                backgroundColor: colors.primary,
-                paddingVertical: 10,
-                paddingHorizontal: 32,
-                borderRadius: 12,
-              }}
-            >
-              <Text style={{ color: '#FFF', fontWeight: '700', fontSize: 14 }}>Entendi</Text>
-            </TouchableOpacity>
+            <View style={styles.agendaGuideList}>
+              {currentAgendaGuideSlide.points.map(point => (
+                <View key={point} style={styles.agendaGuideListItem}>
+                  <Ionicons name="checkmark-circle" size={17} color={colors.primary} />
+                  <Text style={styles.agendaGuideListText}>{point}</Text>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.onboardingDotsRow}>
+              {AGENDA_GUIDE_SLIDES.map((slide, index) => {
+                const isActive = index === agendaGuideStep;
+                return (
+                  <TouchableOpacity
+                    key={slide.id}
+                    activeOpacity={0.8}
+                    onPress={() => setAgendaGuideStep(index)}
+                    style={[
+                      styles.onboardingDot,
+                      isActive && styles.onboardingDotActive,
+                      isActive && { backgroundColor: colors.primary, borderColor: colors.primary },
+                    ]}
+                  />
+                );
+              })}
+            </View>
+
+            <View style={styles.onboardingButtonsRow}>
+              <TouchableOpacity
+                style={styles.onboardingGhostButton}
+                onPress={agendaGuideStep === 0 ? closeAgendaGuide : previousAgendaGuideStep}
+              >
+                <Text style={styles.onboardingGhostButtonText}>
+                  {agendaGuideStep === 0 ? 'Pular' : 'Voltar'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.onboardingPrimaryButton} onPress={nextAgendaGuideStep}>
+                <Text style={styles.onboardingPrimaryButtonText}>
+                  {isLastAgendaGuideStep ? 'Entendi' : 'Próximo'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Animated.View>
       )}

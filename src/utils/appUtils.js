@@ -298,6 +298,13 @@ export const emptyAnamnesis = () => ({
   antirretroviral_dose: '',
   outros_medicamento: '',
   woundImageUri: '',
+  imagemOriginalUri: '',
+  imageUri: '',
+  imageBase64: '',
+  imageMimeType: '',
+  rois: [],
+  roiPoints: [],
+  roiMask: null,
   ferida_largura: '',
   ferida_comprimento: '',
   ferida_profundidade: '',
@@ -352,6 +359,78 @@ export const emptyAnamnesis = () => ({
   coren: '',
   data_retorno: '',
 });
+
+const normalizeRoiPoint = point => {
+  const x = Math.min(Math.max(Number(point?.x) || 0, 0), 1);
+  const y = Math.min(Math.max(Number(point?.y) || 0, 0), 1);
+  return { x, y };
+};
+
+const ROI_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6'];
+
+const normalizeRoiItem = (roi, index) => ({
+  id: roi?.id || `roi-${index + 1}`,
+  label: roi?.label || `ROI ${index + 1}`,
+  mode: roi?.mode === 'pen' ? 'pen' : 'points',
+  color: roi?.color || ROI_COLORS[index % ROI_COLORS.length],
+  points: Array.isArray(roi?.points) ? roi.points.map(normalizeRoiPoint) : [],
+  roiImageUri: roi?.roiImageUri || '',
+  roiImageBase64: roi?.roiImageBase64 || '',
+});
+
+export const normalizeEvaluationImageData = evaluation => {
+  const originalForm = evaluation?.form || {};
+  const imagemOriginalUri =
+    originalForm.imageUri ||
+    evaluation?.imageUri ||
+    originalForm.imagemOriginalUri ||
+    originalForm.woundImageUri ||
+    evaluation?.imagemOriginalUri ||
+    evaluation?.woundImageUri ||
+    '';
+  const legacyRoiPoints = Array.isArray(originalForm.roiPoints)
+    ? originalForm.roiPoints.map(normalizeRoiPoint)
+    : Array.isArray(evaluation?.roiPoints)
+      ? evaluation.roiPoints.map(normalizeRoiPoint)
+      : [];
+  const roisSource = Array.isArray(originalForm.rois)
+    ? originalForm.rois
+    : Array.isArray(evaluation?.rois)
+      ? evaluation.rois
+      : legacyRoiPoints.length
+        ? [{ id: 'roi-1', label: 'ROI 1', mode: 'points', color: ROI_COLORS[0], points: legacyRoiPoints }]
+        : [];
+  const rois = roisSource
+    .map(normalizeRoiItem)
+    .filter(roi => roi.points.length > 0);
+  const roiPoints = rois[0]?.points || legacyRoiPoints;
+  const roiMask = roiPoints.length >= 3 ? { type: 'polygon', points: roiPoints } : null;
+  const imageBase64 = originalForm.imageBase64 || evaluation?.imageBase64 || '';
+  const imageMimeType = originalForm.imageMimeType || evaluation?.imageMimeType || '';
+
+  return {
+    ...evaluation,
+    imageUri: imagemOriginalUri,
+    imageBase64,
+    imageMimeType,
+    imagemOriginalUri,
+    woundImageUri: imagemOriginalUri,
+    rois,
+    roiPoints,
+    roiMask,
+    form: {
+      ...originalForm,
+      imageUri: imagemOriginalUri,
+      imageBase64,
+      imageMimeType,
+      woundImageUri: imagemOriginalUri,
+      imagemOriginalUri,
+      rois,
+      roiPoints,
+      roiMask,
+    },
+  };
+};
 
 export const createDefaultDb = () => ({
   user: {
@@ -412,12 +491,22 @@ export const createDefaultDb = () => ({
 export const migrateDb = rawData => {
   const defaultDb = createDefaultDb();
   const nextData = rawData || defaultDb;
+  const nextPacientes = Array.isArray(nextData.pacientes)
+    ? nextData.pacientes.map(paciente => ({
+        ...paciente,
+        archived: paciente.archived || false,
+        archivedAt: paciente.archivedAt || null,
+        avaliacoes: Array.isArray(paciente.avaliacoes)
+          ? paciente.avaliacoes.map(normalizeEvaluationImageData)
+          : [],
+      }))
+    : defaultDb.pacientes;
 
   return {
     ...defaultDb,
     ...nextData,
     user: { ...defaultDb.user, ...(nextData.user || {}) },
-    pacientes: Array.isArray(nextData.pacientes) ? nextData.pacientes : defaultDb.pacientes,
+    pacientes: nextPacientes,
     bancoDeConsultas: Array.isArray(nextData.bancoDeConsultas)
       ? nextData.bancoDeConsultas.map(normalizeConsulta)
       : defaultDb.bancoDeConsultas,
