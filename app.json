@@ -17,6 +17,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.pedrotescaro.healplusmobile",
       "adaptiveIcon": {
         "foregroundImage": "./.assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -28,6 +29,12 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4d53e9da-ca28-44c1-9888-b537a4783f42"
+      }
+    },
+    "owner": "pedrotescaro"
   }
 }
