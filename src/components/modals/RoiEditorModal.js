@@ -41,6 +41,7 @@ export default function RoiEditorModal({
 }) {
   const [draftRois, setDraftRois] = useState([]);
   const [selectedRoiId, setSelectedRoiId] = useState(null);
+  const [drawingEnabled, setDrawingEnabled] = useState(true);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [measuredImageSize, setMeasuredImageSize] = useState({
     width: Number(imageWidth) || 0,
@@ -48,6 +49,7 @@ export default function RoiEditorModal({
   });
   const selectedRoi = draftRois.find(roi => roi.id === selectedRoiId) || draftRois[0] || null;
   const canConfirm = hasValidRois(draftRois);
+  const isDrawingActive = Boolean(drawingEnabled && selectedRoi?.mode);
   const resolvedImageWidth = Number(imageWidth) || measuredImageSize.width;
   const resolvedImageHeight = Number(imageHeight) || measuredImageSize.height;
   const imageFrame = useMemo(
@@ -68,6 +70,7 @@ export default function RoiEditorModal({
 
     setDraftRois(nextRois);
     setSelectedRoiId(nextRois[0]?.id || null);
+    setDrawingEnabled(true);
   }, [initialPoints, initialRois, visible]);
 
   useEffect(() => {
@@ -95,7 +98,7 @@ export default function RoiEditorModal({
 
   const addPointFromEvent = useCallback(
     event => {
-      if (!canvasSize.width || !canvasSize.height || !imageFrame.width || !imageFrame.height || !selectedRoiId) return;
+      if (!isDrawingActive || !canvasSize.width || !canvasSize.height || !imageFrame.width || !imageFrame.height || !selectedRoiId) return;
 
       const { locationX, locationY } = event.nativeEvent;
       const insideImage =
@@ -122,26 +125,26 @@ export default function RoiEditorModal({
         return { ...roi, points: [...roi.points, nextPoint] };
       });
     },
-    [canvasSize.height, canvasSize.width, imageFrame.height, imageFrame.width, imageFrame.x, imageFrame.y, selectedRoiId, updateSelectedRoi]
+    [canvasSize.height, canvasSize.width, imageFrame.height, imageFrame.width, imageFrame.x, imageFrame.y, isDrawingActive, selectedRoiId, updateSelectedRoi]
   );
 
   const addPointIfPen = useCallback(
     event => {
-      if (selectedRoi?.mode !== 'pen') return;
+      if (!isDrawingActive || selectedRoi?.mode !== 'pen') return;
       addPointFromEvent(event);
     },
-    [addPointFromEvent, selectedRoi?.mode]
+    [addPointFromEvent, isDrawingActive, selectedRoi?.mode]
   );
 
   const stageResponder = useMemo(
     () => ({
-      onStartShouldSetResponder: () => true,
-      onMoveShouldSetResponder: () => selectedRoi?.mode === 'pen',
+      onStartShouldSetResponder: () => isDrawingActive,
+      onMoveShouldSetResponder: () => isDrawingActive && selectedRoi?.mode === 'pen',
       onResponderGrant: addPointFromEvent,
       onResponderMove: addPointIfPen,
       onResponderTerminationRequest: () => false,
     }),
-    [addPointFromEvent, addPointIfPen, selectedRoi?.mode]
+    [addPointFromEvent, addPointIfPen, isDrawingActive, selectedRoi?.mode]
   );
 
   const addNewRoi = () => {
@@ -155,6 +158,7 @@ export default function RoiEditorModal({
       },
     ]);
     setSelectedRoiId(nextRoi.id);
+    setDrawingEnabled(true);
   };
 
   const removeSelectedRoi = () => {
@@ -176,10 +180,17 @@ export default function RoiEditorModal({
     const nextRoi = createRoi(0);
     setDraftRois([nextRoi]);
     setSelectedRoiId(nextRoi.id);
+    setDrawingEnabled(true);
   };
 
   const setSelectedMode = mode => {
+    if (selectedRoi?.mode === mode && drawingEnabled) {
+      setDrawingEnabled(false);
+      return;
+    }
+
     updateSelectedRoi(roi => ({ ...roi, mode }));
+    setDrawingEnabled(true);
   };
 
   const handleConfirm = () => {
@@ -218,6 +229,7 @@ export default function RoiEditorModal({
           contentContainerStyle={styles.roiEditorBodyContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          scrollEnabled={!isDrawingActive}
         >
           <View
             style={styles.roiImageStage}
@@ -240,20 +252,20 @@ export default function RoiEditorModal({
 
           <View style={styles.roiModeRow}>
             <TouchableOpacity
-              style={[styles.roiModeButton, selectedRoi?.mode === 'points' && styles.roiModeButtonActive]}
+              style={[styles.roiModeButton, isDrawingActive && selectedRoi?.mode === 'points' && styles.roiModeButtonActive]}
               onPress={() => setSelectedMode('points')}
             >
-              <Ionicons name="radio-button-on-outline" size={17} color={selectedRoi?.mode === 'points' ? '#FFF' : colors.primary} />
-              <Text style={[styles.roiModeButtonText, selectedRoi?.mode === 'points' && styles.roiModeButtonTextActive]}>
+              <Ionicons name="radio-button-on-outline" size={17} color={isDrawingActive && selectedRoi?.mode === 'points' ? '#FFF' : colors.primary} />
+              <Text style={[styles.roiModeButtonText, isDrawingActive && selectedRoi?.mode === 'points' && styles.roiModeButtonTextActive]}>
                 Pontos
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.roiModeButton, selectedRoi?.mode === 'pen' && styles.roiModeButtonActive]}
+              style={[styles.roiModeButton, isDrawingActive && selectedRoi?.mode === 'pen' && styles.roiModeButtonActive]}
               onPress={() => setSelectedMode('pen')}
             >
-              <Ionicons name="brush-outline" size={17} color={selectedRoi?.mode === 'pen' ? '#FFF' : colors.primary} />
-              <Text style={[styles.roiModeButtonText, selectedRoi?.mode === 'pen' && styles.roiModeButtonTextActive]}>
+              <Ionicons name="brush-outline" size={17} color={isDrawingActive && selectedRoi?.mode === 'pen' ? '#FFF' : colors.primary} />
+              <Text style={[styles.roiModeButtonText, isDrawingActive && selectedRoi?.mode === 'pen' && styles.roiModeButtonTextActive]}>
                 Caneta fina
               </Text>
             </TouchableOpacity>
@@ -263,10 +275,12 @@ export default function RoiEditorModal({
             <Ionicons name="finger-print-outline" size={22} color={selectedRoi?.color || colors.primary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.roiEditorHintTitle}>
-                {selectedRoi?.label || 'ROI'} • {selectedRoi?.mode === 'pen' ? 'Caneta fina' : 'Pontos'}
+                {selectedRoi?.label || 'ROI'} • {isDrawingActive ? (selectedRoi?.mode === 'pen' ? 'Caneta fina' : 'Pontos') : 'Desenho pausado'}
               </Text>
               <Text style={styles.roiEditorHintText}>
-                {selectedRoi?.mode === 'pen'
+                {!isDrawingActive
+                  ? 'Arraste a tela para subir ou descer. Toque em Pontos ou Caneta fina para voltar a marcar.'
+                  : selectedRoi?.mode === 'pen'
                   ? 'Arraste o dedo para desenhar uma linha fina e contínua ao redor da ferida.'
                   : 'Toque em pontos ao redor da ferida para formar o contorno.'}
               </Text>
