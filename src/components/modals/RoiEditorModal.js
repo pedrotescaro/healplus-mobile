@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Image, Modal, Platform, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import RoiImageOverlay, { hasValidRois, normalizeRoiPoints, normalizeRois } from '../common/RoiImageOverlay';
@@ -9,7 +9,7 @@ const POINT_MIN_DISTANCE = 0.035;
 const PEN_MIN_DISTANCE = 0.006;
 
 const createRoi = index => ({
-  id: `roi-${Date.now()}-${index + 1}`,
+  id: `roi-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   label: `ROI ${index + 1}`,
   mode: 'pen',
   color: ROI_COLORS[index % ROI_COLORS.length],
@@ -103,7 +103,14 @@ export default function RoiEditorModal({
 
   const addNewRoi = () => {
     const nextRoi = createRoi(draftRois.length);
-    setDraftRois(currentRois => [...currentRois, nextRoi]);
+    setDraftRois(currentRois => [
+      ...currentRois,
+      {
+        ...nextRoi,
+        label: `ROI ${currentRois.length + 1}`,
+        color: ROI_COLORS[currentRois.length % ROI_COLORS.length],
+      },
+    ]);
     setSelectedRoiId(nextRoi.id);
   };
 
@@ -225,10 +232,6 @@ export default function RoiEditorModal({
                 {canConfirm ? `${draftRois.filter(roi => roi.points.length >= 3).length} ROI(s) salvas` : 'Marque ao menos 3 pontos'}
               </Text>
             </View>
-            <TouchableOpacity style={styles.roiAddButton} onPress={addNewRoi}>
-              <Ionicons name="add" size={18} color={colors.primary} />
-              <Text style={styles.roiAddButtonText}>Adicionar ROI</Text>
-            </TouchableOpacity>
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.roiListScroll}>
@@ -248,6 +251,14 @@ export default function RoiEditorModal({
             })}
           </ScrollView>
 
+        </ScrollView>
+
+        <View style={styles.roiEditorFooter}>
+          <TouchableOpacity style={styles.roiAddButton} onPress={addNewRoi}>
+            <Ionicons name="add" size={18} color={colors.primary} />
+            <Text style={styles.roiAddButtonText}>Adicionar ROI</Text>
+          </TouchableOpacity>
+
           <View style={styles.roiSmallActionsRow}>
             <TouchableOpacity style={styles.roiSmallActionButton} onPress={removeSelectedRoi}>
               <Ionicons name="trash-outline" size={16} color="#EF4444" />
@@ -258,19 +269,19 @@ export default function RoiEditorModal({
               <Text style={styles.roiSmallActionText}>Limpar tudo</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
 
-        <View style={[styles.roiEditorFooter, Platform.OS === 'android' && { paddingBottom: 42 }]}>
-          <TouchableOpacity style={styles.roiSecondaryButton} onPress={onCancel}>
-            <Text style={styles.roiSecondaryButtonText}>Voltar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.roiPrimaryButton, !canConfirm && { opacity: 0.5 }]}
-            onPress={handleConfirm}
-            disabled={!canConfirm}
-          >
-            <Text style={styles.roiPrimaryButtonText}>Confirmar ROI</Text>
-          </TouchableOpacity>
+          <View style={styles.roiFooterMainRow}>
+            <TouchableOpacity style={styles.roiSecondaryButton} onPress={onCancel}>
+              <Text style={styles.roiSecondaryButtonText}>Voltar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.roiPrimaryButton, !canConfirm && { opacity: 0.5 }]}
+              onPress={handleConfirm}
+              disabled={!canConfirm}
+            >
+              <Text style={styles.roiPrimaryButtonText}>Confirmar ROI</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     </Modal>
